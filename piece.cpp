@@ -2,20 +2,14 @@
 
 Piece::Piece()
 {
-
-}
-
-Piece::Piece(int positionX, int positionY, int team)
-{
-	position.positionX = positionX;
-	position.positionY = positionY;
-	this->team = team;
+	setRepresentation('-');
 }
 
 Piece::Piece(Position position, int team)
 {
 	this->position = position;
 	this->team = team;
+	setRepresentation('-');
 }
 
 Position Piece::getPosition()
@@ -31,4 +25,38 @@ int Piece::setPosition(Position position)
 int Piece::moveTo(Position position)
 {
 	return 0;
+}
+
+char Piece::getChar()
+{
+	return representation;
+}
+
+void Piece::setRepresentation(char representation)
+{
+	this->representation = representation;
+}
+
+/* PAWN */
+Pawn::Pawn(Position position, int team)
+: Piece(position, team)
+{
+	setRepresentation('P');
+}
+
+std::vector<Position> Pawn::getMovableTiles()
+{
+	
+}
+
+/* ROOK */
+Rook::Rook(Position position, int team)
+: Piece(position, team)
+{
+	setRepresentation('R');
+}
+
+std::vector<Position> Rook::getMovableTiles()
+{
+	
 }

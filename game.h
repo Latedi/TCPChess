@@ -9,7 +9,6 @@ private:
 	Board board;
 public:
 	Game();
-	
 };
 
 #endif /* GAME_H */

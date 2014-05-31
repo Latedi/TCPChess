@@ -6,6 +6,7 @@
 
 int main(int argc, char* argv[])
 {
-	std::cout << "Compilation worked\n";
+	Board board = Board();
+	
 	return 0;
 }
