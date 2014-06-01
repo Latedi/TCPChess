@@ -5,31 +5,15 @@ Piece::Piece()
 	setRepresentation('-');
 }
 
-Piece::Piece(Position position, int team)
+Piece::Piece(int team)
 {
-	this->position = position;
 	this->team = team;
 	setRepresentation('-');
 }
 
-Position Piece::getPosition()
+void Piece::printMe()
 {
-	return position;
-}
-
-int Piece::setPosition(Position position)
-{
-	return 0;
-}
-
-int Piece::moveTo(Position position)
-{
-	return 0;
-}
-
-char Piece::getChar()
-{
-	return representation;
+	std::cout << representation;
 }
 
 void Piece::setRepresentation(char representation)
@@ -37,26 +21,49 @@ void Piece::setRepresentation(char representation)
 	this->representation = representation;
 }
 
+std::vector<Position> Piece::getMovableTiles(Position position, int size)
+{
+}
+
 /* PAWN */
-Pawn::Pawn(Position position, int team)
-: Piece(position, team)
+Pawn::Pawn(int team)
+: Piece(team)
 {
 	setRepresentation('P');
 }
 
-std::vector<Position> Pawn::getMovableTiles()
+std::vector<Position> Pawn::getMovableTiles(Position position, int size)
 {
+	int x = position.getX();
+	int y = position.getY();;
+	std::vector<Position> res;
+	if(team == BLACK)
+	{
+		std::cout << "X=" << x << " Y=" << y << std::endl;
+		if(y + 1 < size)
+			res.push_back(Position(x, y+1));
+		if(y + 2 < size && y == 1)
+			res.push_back(Position(x, y+2));
+	}
+	else if(team == WHITE)
+	{
+		if(y - 1 >= 0)
+			res.push_back(Position(x, y-1));
+		if(y - 2 >= 0 && y == size - 1)
+			res.push_back(Position(x, y-2));
+	}
 	
+	return res;
 }
 
 /* ROOK */
-Rook::Rook(Position position, int team)
-: Piece(position, team)
+Rook::Rook(int team)
+: Piece(team)
 {
 	setRepresentation('R');
 }
 
-std::vector<Position> Rook::getMovableTiles()
+std::vector<Position> Rook::getMovableTiles(Position position, int size)
 {
 	
 }

@@ -5,43 +5,36 @@
 #define BLACK 1
 
 #include <vector>
+#include <iostream>
 
-struct Position
-{
-	int positionX;
-	int positionY;
-};
+#include "position.h"
 
 class Piece
 {
 private:
-	Position position;
-	int team;
-	int setPosition(Position position);
 	char representation;
 public:
 	Piece();
-	Piece(Position position, int team);
-	Position getPosition();
-	int moveTo(Position position);
-	std::vector<Position> getMovableTiles();
-	char getChar();
+	Piece(int team);
+	virtual std::vector<Position> getMovableTiles(Position position, int size);
+	void printMe();
 protected:
+	int team;
 	void setRepresentation(char representation);
 };
 
 class Pawn : public Piece
 {
 public:
-	Pawn(Position position, int team);
-	std::vector<Position> getMovableTiles();
+	Pawn(int team);
+	virtual std::vector<Position> getMovableTiles(Position position, int size);
 };
 
 class Rook : public Piece
 {
 public:
-	Rook(Position position, int team);
-	std::vector<Position> getMovableTiles();
+	Rook(int team);
+	virtual std::vector<Position> getMovableTiles(Position position, int size);
 };
 
 #endif /* PIECE_H */
