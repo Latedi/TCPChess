@@ -11,20 +11,65 @@ Piece::Piece(int team)
 	setRepresentation('-');
 }
 
-void Piece::printMe()
+//Print the piece with correct colors
+void Piece::printMe(int bgColor)
 {
+	HANDLE hConsole;
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	
+	int foregroundColor;
+	if(team == WHITE)
+		foregroundColor = FOREGROUND_RED | FOREGROUND_INTENSITY;
+	else
+		foregroundColor = FOREGROUND_BLUE |FOREGROUND_INTENSITY;
+		
+	int backgroundColor;
+	switch(bgColor)
+	{
+	case WHITE:
+		backgroundColor = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY;
+		break;
+	case BLACK:
+		backgroundColor = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
+		break;
+	}
+	
+	SetConsoleTextAttribute(hConsole, foregroundColor | backgroundColor);
 	std::cout << representation;
 }
 
+//Print an empty tile
+void Piece::printEmpty(int bgColor)
+{
+	HANDLE hConsole;
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	
+	switch(bgColor)
+	{
+	case WHITE:
+		bgColor = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY;
+		break;
+	case BLACK:
+		bgColor = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
+		break;
+	}
+	
+	SetConsoleTextAttribute(hConsole, bgColor);
+	std::cout << ' ';
+}
+
+//Set the character which will be printed to represent the piece
 void Piece::setRepresentation(char representation)
 {
 	this->representation = representation;
 }
 
+//Virtual function implemented individually for every piece
 std::vector<Position> Piece::getMovableTiles(Position position, int size)
 {
 }
 
+//So we don't go out of bounds of the board
 bool doesTileExist(Position position, int size)
 {
 	int x = position.getX();

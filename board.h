@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <windows.h>
 
 #include "piece.h"
 #include "position.h"
@@ -14,6 +15,7 @@ class Board
 private:
 	Piece * tiles[SIZE][SIZE];
 	void initialize();
+	void resetConsoleColor();
 public:
 	Board();
 	void renderBoard();

@@ -5,6 +5,7 @@ Board::Board()
 	initialize();
 }
 
+//Place all the pieces on the board
 void Board::initialize()
 {	
 	for(int i = 0; i < SIZE; i++)
@@ -69,24 +70,36 @@ void Board::initialize()
 	renderBoard();
 }
 
+//Print the entire board. Pieces are responsible for printing themselves
 void Board::renderBoard()
 {
 	for(int i = 0; i < SIZE; i++)
 	{
 		for(int j = 0; j < SIZE; j++)
 		{
+			int bgColor = (i + j) % 2;
 			if(tiles[i][j] != NULL)
 			{
-				tiles[i][j]->printMe();
+				tiles[i][j]->printMe(bgColor);
 			}
 			else
 			{
-				std::cout << "-";
+				tiles[i][j]->printEmpty(bgColor);
 			}
 		}
 		
 		std::cout << std::endl;
 	}
+	
+	resetConsoleColor();
+}
+
+//Reset the console color so we don't get a funky looking command line
+void Board::resetConsoleColor()
+{
+	HANDLE hConsole;
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
 int Board::getSize()

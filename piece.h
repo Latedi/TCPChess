@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <iostream>
+#include <windows.h>
 
 #include "position.h"
 
@@ -20,7 +21,8 @@ public:
 	Piece();
 	Piece(int team);
 	virtual std::vector<Position> getMovableTiles(Position position, int size);
-	void printMe();
+	void printMe(int bgColor);
+	void printEmpty(int bgColor);
 	bool doesTileExist(Position position);
 };
 
