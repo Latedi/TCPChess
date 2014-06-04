@@ -73,8 +73,13 @@ void Board::initialize()
 //Print the entire board. Pieces are responsible for printing themselves
 void Board::renderBoard()
 {
+	std::cout << " abcdefgh" << std::endl;
+	
 	for(int i = 0; i < SIZE; i++)
 	{
+		resetConsoleColor();
+		std::cout << SIZE - i;
+		
 		for(int j = 0; j < SIZE; j++)
 		{
 			int bgColor = (i + j) % 2;
