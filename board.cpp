@@ -5,6 +5,19 @@ Board::Board()
 	initialize();
 }
 
+//Delete all existing pieces
+Board::~Board()
+{
+	for(int i = 0; i < SIZE; i++)
+	{
+		for(int j = 0; j < SIZE; j++)
+		{
+			if(tiles[i][j] != NULL)
+				delete tiles[i][j];
+		}
+	}
+}
+
 //Place all the pieces on the board
 void Board::initialize()
 {	

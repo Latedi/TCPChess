@@ -18,6 +18,7 @@ private:
 	void resetConsoleColor();
 public:
 	Board();
+	~Board();
 	void renderBoard();
 	int getSize();
 };
