@@ -81,6 +81,60 @@ void Board::initialize()
 	tiles[SIZE-1][3] = whiteQueen;
 	
 	renderBoard();
+	printMovable(Position(0, 4));
+}
+
+//Print all tiles a piece can move to. Used for debug purposes.
+void Board::printMovable(Position position)
+{
+	if(doesTileExist(position) && !isTileEmpty(position))
+	{
+		std::vector<Position> m = tiles[position.getX()][position.getY()]->getMovableTiles(position, SIZE);
+		m = removeFriendly(m, tiles[position.getX()][position.getY()]->getTeam());
+		
+		for(std::vector<Position>::iterator it = m.begin(); it != m.end(); it++)
+		{
+			std::cout << it->getX() << " " << it->getY() << std::endl;
+		}
+		
+		return;
+	}
+	
+	std::cout << "The position (" << position.getX() << ", " << position.getY() <<
+				") either does not exist or does not contain a piece" << std::endl;
+}
+
+//See if there is a already a piece on the tile or not.
+bool Board::isTileEmpty(Position position)
+{
+	if(tiles[position.getX()][position.getY()] == NULL)
+		return true;
+	return false;
+}
+
+//Check if the tile exists on the board. ie a tile with index -1 2 doesn't exist.
+bool Board::doesTileExist(Position position)
+{
+	int x = position.getX();
+	int y = position.getY();
+	if(y >= 0 && y < SIZE && x >= 0 && x < SIZE)
+		return true;
+	return false;
+}
+
+//Remove all occurances of pieces from a team from a list of positions.
+std::vector<Position> Board::removeFriendly(std::vector<Position> positions, int team)
+{
+	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
+	{
+		if(tiles[it->getX()][it->getY()]->getTeam() == team)
+		{
+			positions.erase(it);
+			it--;
+		}
+	}
+	
+	return positions;
 }
 
 //Print the entire board. Pieces are responsible for printing themselves

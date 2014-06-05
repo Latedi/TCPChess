@@ -23,7 +23,8 @@ public:
 	virtual std::vector<Position> getMovableTiles(Position position, int size);
 	void printMe(int bgColor);
 	void printEmpty(int bgColor);
-	bool doesTileExist(Position position);
+	const bool doesTileExist(Position position, int size);
+	int getTeam();
 };
 
 class King : public Piece

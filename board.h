@@ -21,6 +21,10 @@ public:
 	~Board();
 	void renderBoard();
 	int getSize();
+	void printMovable(Position position);
+	bool isTileEmpty(Position position);
+	bool doesTileExist(Position position);
+	std::vector<Position> removeFriendly(std::vector<Position> positions, int team);
 };
 
 #endif /* BOARD_H */

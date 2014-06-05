@@ -58,6 +58,11 @@ void Piece::printEmpty(int bgColor)
 	std::cout << ' ';
 }
 
+int Piece::getTeam()
+{
+	return team;
+}
+
 //Set the character which will be printed to represent the piece
 void Piece::setRepresentation(char representation)
 {
@@ -70,7 +75,7 @@ std::vector<Position> Piece::getMovableTiles(Position position, int size)
 }
 
 //So we don't go out of bounds of the board
-bool doesTileExist(Position position, int size)
+const bool Piece::doesTileExist(Position position, int size)
 {
 	int x = position.getX();
 	int y = position.getY();
@@ -90,7 +95,23 @@ King::King(int team)
 
 std::vector<Position> King::getMovableTiles(Position position, int size)
 {
+	std::vector<Position> res;
+	int x = position.getX();
+	int y = position.getY();
 	
+	for(int xOffset = -1; xOffset <= 1; xOffset++)
+	{
+		for(int yOffset = -1; yOffset <= 1; yOffset++)
+		{
+			if(xOffset != 0 || yOffset != 0)
+			{
+				Position movPos = Position(x + xOffset, y + yOffset);
+				if(doesTileExist(movPos, size))
+					res.push_back(movPos);
+			}
+		}
+	}
+	return res;
 }
 
 bool King::hasMoved()
