@@ -19,6 +19,7 @@ std::string Position::toString()
 	std::stringstream s;
 	s << positionX;
 	res += s.str() + ", ";
+	s.str(std::string());
 	s << positionY;
 	res += s.str() + ")";
 	return res;

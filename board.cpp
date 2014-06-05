@@ -81,7 +81,7 @@ void Board::initialize()
 	tiles[SIZE-1][3] = whiteQueen;
 	
 	renderBoard();
-	printMovable(Position(0, 4));
+	printMovable(Position(0, 1));
 }
 
 //Print all tiles a piece can move to. Used for debug purposes.
@@ -92,6 +92,7 @@ void Board::printMovable(Position position)
 		std::vector<Position> m = tiles[position.getX()][position.getY()]->getMovableTiles(position, SIZE);
 		m = removeFriendly(m, tiles[position.getX()][position.getY()]->getTeam());
 		
+		std::cout << "printing";
 		for(std::vector<Position>::iterator it = m.begin(); it != m.end(); it++)
 		{
 			std::cout << it->getX() << " " << it->getY() << std::endl;
@@ -125,12 +126,19 @@ bool Board::doesTileExist(Position position)
 //Remove all occurances of pieces from a team from a list of positions.
 std::vector<Position> Board::removeFriendly(std::vector<Position> positions, int team)
 {
-	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
+	std::vector<Position>::iterator it = positions.begin();
+	while(it != positions.end())
 	{
+		std::cout << "remove " << it->toString() << "?\n";
 		if(tiles[it->getX()][it->getY()]->getTeam() == team)
 		{
+			std::cout << "removing " << it->toString() << std::endl;
 			positions.erase(it);
-			it--;
+			std::cout << "removed it\n";
+		}
+		else {
+			it++;
+			std::cout << "did not remove " << it->toString() << std::endl;
 		}
 	}
 	
