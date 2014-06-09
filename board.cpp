@@ -92,7 +92,6 @@ void Board::printMovable(Position position)
 		std::vector<Position> m = tiles[position.getX()][position.getY()]->getMovableTiles(position, SIZE);
 		m = removeFriendly(m, tiles[position.getX()][position.getY()]->getTeam());
 		
-		std::cout << "printing";
 		for(std::vector<Position>::iterator it = m.begin(); it != m.end(); it++)
 		{
 			std::cout << it->getX() << " " << it->getY() << std::endl;
@@ -129,17 +128,18 @@ std::vector<Position> Board::removeFriendly(std::vector<Position> positions, int
 	std::vector<Position>::iterator it = positions.begin();
 	while(it != positions.end())
 	{
-		std::cout << "remove " << it->toString() << "?\n";
-		if(tiles[it->getX()][it->getY()]->getTeam() == team)
+		if(!isTileEmpty(*it))
 		{
-			std::cout << "removing " << it->toString() << std::endl;
-			positions.erase(it);
-			std::cout << "removed it\n";
+			if(tiles[it->getX()][it->getY()]->getTeam() == team)
+			{
+				positions.erase(it);
+			}
+			else {
+				it++;
+			}
 		}
-		else {
+		else
 			it++;
-			std::cout << "did not remove " << it->toString() << std::endl;
-		}
 	}
 	
 	return positions;
