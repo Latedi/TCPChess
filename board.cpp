@@ -12,7 +12,7 @@ Board::~Board()
 	{
 		for(int j = 0; j < B_SIZE; j++)
 		{
-			if(tiles[i][j] != NULL)
+			if(!isTileEmpty(Position(i, j)))
 				delete tiles[i][j];
 		}
 	}
@@ -80,32 +80,42 @@ void Board::initialize()
 	tiles[0][3] = blackQueen;
 	tiles[B_SIZE-1][3] = whiteQueen;
 	
+	Queen *br = new Queen(BLACK);
+	tiles[4][4] = br;
 	renderBoard();
+	printMovable(Position(4, 4));
+}
+
+//Return the positions a piece can move to.
+std::vector<Position> Board::getMovable(Position position)
+{
+	std::vector<Position> res;
+	
+	if(doesTileExist(position) && !isTileEmpty(position))
+	{
+		res = tiles[position.getX()][position.getY()]->getMovableTiles(position);
+		
+		Piece *p = tiles[position.getX()][position.getY()];
+		if(p->getRepresentation() == 'R' || p->getRepresentation() == 'Q')
+		{
+			res = removeBlockingStraight(res, position);
+		}
+		if(p->getRepresentation() == 'B' || p->getRepresentation() == 'Q')
+		{
+			res = removeBlockingDiagonal(res, position);
+		}
+		
+		res = removeFriendly(res, tiles[position.getX()][position.getY()]->getTeam());
+	}
+	
+	return res;
 }
 
 //Print all tiles a piece can move to. Used for debug purposes.
 void Board::printMovable(Position position)
 {
-	if(doesTileExist(position) && !isTileEmpty(position))
-	{
-		std::vector<Position> m = tiles[position.getX()][position.getY()]->getMovableTiles(position);
-		
-		Piece *p = tiles[position.getX()][position.getY()];
-		if(p->getRepresentation() == 'R' || p->getRepresentation() == 'Q')
-		{
-			m = removeBlockingStraight(m, position);
-		}
-		if(p->getRepresentation() == 'B' || p->getRepresentation() == 'Q')
-		{
-			m = removeBlockingDiagonal(m, position);
-		}
-		
-		printPositionVector(m);
-		return;
-	}
-	
-	std::cout << "The position (" << position.getX() << ", " << position.getY() <<
-				") either does not exist or does not contain a piece" << std::endl;
+	std::vector<Position> positionVector = getMovable(position);
+	printPositionVector(positionVector);
 }
 
 //See if there is a already a piece on the tile or not.
@@ -209,6 +219,75 @@ std::vector<Position> Board::removeBlockingStraight(std::vector<Position> positi
 //Remove positions from the positions array which are block by other pieces from the position initialPosition. Diagonally
 std::vector<Position> Board::removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition)
 {
+	int iX = initialPosition.getX();
+	int iY = initialPosition.getY();
+
+	Position upLeft = Position(-1, -1);
+	Position upRight = Position(B_SIZE, -1);
+	Position downLeft = Position(-1, B_SIZE);
+	Position downRight = Position(B_SIZE, B_SIZE);
+	
+	//Find the closest pieces diagonally
+	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
+	{		
+		if(!isTileEmpty(*it))
+		{
+			int nX = it->getX();
+			int nY = it->getY();
+			
+			int distanceX = nX - iX;
+			if(distanceX < 0)
+				distanceX *= -1;
+			int distanceY = nY - iY;
+			if(distanceY < 0)
+				distanceY *= -1;
+				
+			//Piece is diagonal to the initialPosition
+			if(distanceX == distanceY)
+			{
+				if(nX > iX && nY > iY && nX < downRight.getX() && nY < downRight.getY())
+					downRight = Position(nX, nY);
+				else if(nX > iX && nY < iY && nX < upRight.getX() && nY > upRight.getY())
+					upRight = Position(nX, nY);
+				else if(nX < iX && nY > iY && nX > downLeft.getX() && nY < downLeft.getY())
+					downLeft = Position(nX, nY);
+				else if(nX < iX && nY < iY && nX > upLeft.getX() && nY > upLeft.getY())
+					upLeft = Position(nX, nY);
+			}
+		}
+	}
+	
+	//Delete all pieces further away
+	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
+	{
+		int nX = it->getX();
+		int nY = it->getY();
+		bool erase = false;
+		
+		if(nX > downRight.getX() && nY > downRight.getY())
+		{
+			erase = true;
+		}
+		else if(nX > upRight.getX() && nY < upRight.getY())
+		{
+			erase = true;
+		}
+		else if(nX < downLeft.getX() && nY > downLeft.getY())
+		{
+			erase = true;
+		}
+		else if(nX < upLeft.getX() && nY < upLeft.getY())
+		{
+			erase = true;
+		}
+		
+		if(erase)
+		{
+			positions.erase(it);
+			it--;
+		}
+	}
+	
 	return positions;
 }
 

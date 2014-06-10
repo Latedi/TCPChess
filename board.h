@@ -30,6 +30,7 @@ public:
 	int getB_SIZE();
 	void printMovable(Position position);
 	void printPositionVector(std::vector<Position> positions);
+	std::vector<Position> getMovable(Position position);
 };
 
 #endif /* BOARD_H */
