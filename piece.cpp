@@ -63,6 +63,11 @@ int Piece::getTeam()
 	return team;
 }
 
+char Piece::getRepresentation()
+{
+	return representation;
+}
+
 //Set the character which will be printed to represent the piece
 void Piece::setRepresentation(char representation)
 {

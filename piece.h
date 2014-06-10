@@ -25,6 +25,7 @@ public:
 	void printEmpty(int bgColor);
 	const bool doesTileExist(Position position, int size);
 	int getTeam();
+	char getRepresentation();
 };
 
 class King : public Piece

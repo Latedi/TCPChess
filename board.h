@@ -16,15 +16,18 @@ private:
 	Piece * tiles[SIZE][SIZE];
 	void initialize();
 	void resetConsoleColor();
+	bool isTileEmpty(Position position);
+	bool doesTileExist(Position position);
+	std::vector<Position> removeFriendly(std::vector<Position> positions, int team);
+	std::vector<Position> removeBlockingStraight(std::vector<Position> positions, Position initialPosition);
+	std::vector<Position> removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition);
 public:
 	Board();
 	~Board();
 	void renderBoard();
 	int getSize();
 	void printMovable(Position position);
-	bool isTileEmpty(Position position);
-	bool doesTileExist(Position position);
-	std::vector<Position> removeFriendly(std::vector<Position> positions, int team);
+	void printPositionVector(std::vector<Position> positions);
 };
 
 #endif /* BOARD_H */
