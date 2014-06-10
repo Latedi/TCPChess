@@ -8,12 +8,12 @@
 #include "piece.h"
 #include "position.h"
 
-#define SIZE 8
+#define B_B_SIZE 8
 
 class Board
 {
 private:
-	Piece * tiles[SIZE][SIZE];
+	Piece * tiles[B_SIZE][B_SIZE];
 	void initialize();
 	void resetConsoleColor();
 	bool isTileEmpty(Position position);
@@ -25,7 +25,7 @@ public:
 	Board();
 	~Board();
 	void renderBoard();
-	int getSize();
+	int getB_SIZE();
 	void printMovable(Position position);
 	void printPositionVector(std::vector<Position> positions);
 };

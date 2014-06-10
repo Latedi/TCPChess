@@ -3,6 +3,7 @@
 
 #define WHITE 0
 #define BLACK 1
+#define B_SIZE 8
 
 #include <vector>
 #include <iostream>
@@ -20,10 +21,10 @@ protected:
 public:
 	Piece();
 	Piece(int team);
-	virtual std::vector<Position> getMovableTiles(Position position, int size);
+	virtual std::vector<Position> getMovableTiles(Position position);
 	void printMe(int bgColor);
 	void printEmpty(int bgColor);
-	const bool doesTileExist(Position position, int size);
+	const bool doesTileExist(Position position);
 	int getTeam();
 	char getRepresentation();
 };
@@ -34,7 +35,7 @@ private:
 	bool moved;
 public:
 	King(int team);
-	virtual std::vector<Position> getMovableTiles(Position position, int size);
+	virtual std::vector<Position> getMovableTiles(Position position);
 	bool hasMoved();
 	void setMoved(bool moved);
 };
@@ -43,7 +44,7 @@ class Queen : public Piece
 {
 public:
 	Queen(int team);
-	virtual std::vector<Position> getMovableTiles(Position position, int size);
+	virtual std::vector<Position> getMovableTiles(Position position);
 };
 
 class Pawn : public Piece
@@ -52,7 +53,7 @@ private:
 	bool moved;
 public:
 	Pawn(int team);
-	virtual std::vector<Position> getMovableTiles(Position position, int size);
+	virtual std::vector<Position> getMovableTiles(Position position);
 	bool hasMoved();
 	void setMoved(bool moved);
 };
@@ -63,7 +64,7 @@ private:
 	bool moved;
 public:
 	Rook(int team);
-	virtual std::vector<Position> getMovableTiles(Position position, int size);
+	virtual std::vector<Position> getMovableTiles(Position position);
 	bool hasMoved();
 	void setMoved(bool moved);
 };
@@ -72,14 +73,14 @@ class Knight : public Piece
 {
 public:
 	Knight(int team);
-	virtual std::vector<Position> getMovableTiles(Position position, int size);
+	virtual std::vector<Position> getMovableTiles(Position position);
 };
 
 class Bishop : public Piece
 {
 public:
 	Bishop(int team);
-	virtual std::vector<Position> getMovableTiles(Position position, int size);
+	virtual std::vector<Position> getMovableTiles(Position position);
 };
 
 #endif /* PIECE_H */

@@ -75,17 +75,17 @@ void Piece::setRepresentation(char representation)
 }
 
 //Virtual function implemented individually for every piece
-std::vector<Position> Piece::getMovableTiles(Position position, int size)
+std::vector<Position> Piece::getMovableTiles(Position position)
 {
 }
 
 //So we don't go out of bounds of the board
-const bool Piece::doesTileExist(Position position, int size)
+const bool Piece::doesTileExist(Position position)
 {
 	int x = position.getX();
 	int y = position.getY();
 	
-	if(y < 0 || y >= size || x < 0 || x >= size)
+	if(y < 0 || y >= B_SIZE || x < 0 || x >= B_SIZE)
 		return false;
 	return true;
 }
@@ -98,7 +98,7 @@ King::King(int team)
 	moved = false;
 }
 
-std::vector<Position> King::getMovableTiles(Position position, int size)
+std::vector<Position> King::getMovableTiles(Position position)
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -111,7 +111,7 @@ std::vector<Position> King::getMovableTiles(Position position, int size)
 			if(xOffset != 0 || yOffset != 0)
 			{
 				Position movPos = Position(x + xOffset, y + yOffset);
-				if(doesTileExist(movPos, size))
+				if(doesTileExist(movPos))
 					res.push_back(movPos);
 			}
 		}
@@ -136,36 +136,36 @@ Queen::Queen(int team)
 	setRepresentation('Q');
 }
 
-std::vector<Position> Queen::getMovableTiles(Position position, int size)
+std::vector<Position> Queen::getMovableTiles(Position position)
 {
 	std::vector<Position> res;
 	int x = position.getX();
 	int y = position.getY();
 	
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < B_SIZE; i++)
 	{
 		Position pos1 = Position(i, y);
 		Position pos2 = Position(x, i);
-		if(i != x && doesTileExist(pos1, size))
+		if(i != x && doesTileExist(pos1))
 			res.push_back(pos1);
-		if(i != y && doesTileExist(pos2, size))
+		if(i != y && doesTileExist(pos2))
 			res.push_back(pos2);
 	}
 	
-	for(int offset = 1; offset < size - 1; offset++)
+	for(int offset = 1; offset < B_SIZE - 1; offset++)
 	{
 		Position p1, p2, p3, p4;
 		p1 = Position(x + offset, y + offset);
 		p2 = Position(x + offset, y - offset);
 		p3 = Position(x - offset, y + offset);
 		p4 = Position(x - offset, y - offset);
-		if(doesTileExist(p1, size))
+		if(doesTileExist(p1))
 			res.push_back(p1);
-		if(doesTileExist(p2, size))
+		if(doesTileExist(p2))
 			res.push_back(p2);
-		if(doesTileExist(p3, size))
+		if(doesTileExist(p3))
 			res.push_back(p3);
-		if(doesTileExist(p4, size))
+		if(doesTileExist(p4))
 			res.push_back(p4);
 	}
 	
@@ -180,7 +180,7 @@ Pawn::Pawn(int team)
 	moved = false;
 }
 
-std::vector<Position> Pawn::getMovableTiles(Position position, int size)
+std::vector<Position> Pawn::getMovableTiles(Position position)
 {
 	int x = position.getX();
 	int y = position.getY();;
@@ -219,19 +219,19 @@ Rook::Rook(int team)
 	moved = false;
 }
 
-std::vector<Position> Rook::getMovableTiles(Position position, int size)
+std::vector<Position> Rook::getMovableTiles(Position position)
 {
 	std::vector<Position> res;
 	int x = position.getX();
 	int y  = position.getY();
 	
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < B_SIZE; i++)
 	{
 		Position pos1 = Position(i, y);
 		Position pos2 = Position(x, i);
-		if(i != x && doesTileExist(pos1, size))
+		if(i != x && doesTileExist(pos1))
 			res.push_back(pos1);
-		if(i != y && doesTileExist(pos2, size))
+		if(i != y && doesTileExist(pos2))
 			res.push_back(pos2);
 	}
 	
@@ -255,7 +255,7 @@ Knight::Knight(int team)
 	setRepresentation('N');
 }
 
-std::vector<Position> Knight::getMovableTiles(Position position, int size)
+std::vector<Position> Knight::getMovableTiles(Position position)
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -272,9 +272,9 @@ std::vector<Position> Knight::getMovableTiles(Position position, int size)
 		else
 			j = 2;
 			
-		if(doesTileExist(Position(x+i,y+j), size))
+		if(doesTileExist(Position(x+i,y+j)))
 			res.push_back(Position(x+i,y+j));
-		if(doesTileExist(Position(x+i,y-j), size))
+		if(doesTileExist(Position(x+i,y-j)))
 			res.push_back(Position(x+i,y-j));
 	}
 	
@@ -288,26 +288,26 @@ Bishop::Bishop(int team)
 	setRepresentation('B');
 }
 
-std::vector<Position> Bishop::getMovableTiles(Position position, int size)
+std::vector<Position> Bishop::getMovableTiles(Position position)
 {
 	std::vector<Position> res;
 	int x = position.getX();
 	int y = position.getY();
 	
-	for(int offset = 1; offset < size - 1; offset++)
+	for(int offset = 1; offset < B_SIZE - 1; offset++)
 	{
 		Position p1, p2, p3, p4;
 		p1 = Position(x + offset, y + offset);
 		p2 = Position(x + offset, y - offset);
 		p3 = Position(x - offset, y + offset);
 		p4 = Position(x - offset, y - offset);
-		if(doesTileExist(p1, size))
+		if(doesTileExist(p1))
 			res.push_back(p1);
-		if(doesTileExist(p2, size))
+		if(doesTileExist(p2))
 			res.push_back(p2);
-		if(doesTileExist(p3, size))
+		if(doesTileExist(p3))
 			res.push_back(p3);
-		if(doesTileExist(p4, size))
+		if(doesTileExist(p4))
 			res.push_back(p4);
 	}
 	

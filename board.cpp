@@ -8,9 +8,9 @@ Board::Board()
 //Delete all existing pieces
 Board::~Board()
 {
-	for(int i = 0; i < SIZE; i++)
+	for(int i = 0; i < B_SIZE; i++)
 	{
-		for(int j = 0; j < SIZE; j++)
+		for(int j = 0; j < B_SIZE; j++)
 		{
 			if(tiles[i][j] != NULL)
 				delete tiles[i][j];
@@ -21,21 +21,21 @@ Board::~Board()
 //Place all the pieces on the board
 void Board::initialize()
 {	
-	for(int i = 0; i < SIZE; i++)
+	for(int i = 0; i < B_SIZE; i++)
 	{
-		for(int j = 0; j < SIZE; j++)
+		for(int j = 0; j < B_SIZE; j++)
 		{
 			tiles[i][j] = NULL;
 		}
 	}
 	
 	//Place pawns
-	for(int i = 0; i < SIZE; i++)
+	for(int i = 0; i < B_SIZE; i++)
 	{
 		Pawn *blackPawn = new Pawn(BLACK);
 		Pawn *whitePawn = new Pawn(WHITE);
 		tiles[1][i] = blackPawn;
-		tiles[SIZE-2][i] = whitePawn;
+		tiles[B_SIZE-2][i] = whitePawn;
 	}
 	
 	//Place rooks
@@ -44,9 +44,9 @@ void Board::initialize()
 	Rook *whiteRook1 = new Rook(WHITE);
 	Rook *whiteRook2 = new Rook(WHITE);
 	tiles[0][0] = blackRook1;
-	tiles[0][SIZE-1] = blackRook2;
-	tiles[SIZE-1][0] = whiteRook1;
-	tiles[SIZE-1][SIZE-1] = whiteRook2;
+	tiles[0][B_SIZE-1] = blackRook2;
+	tiles[B_SIZE-1][0] = whiteRook1;
+	tiles[B_SIZE-1][B_SIZE-1] = whiteRook2;
 	
 	//Place knights
 	Knight *blackKnight1 = new Knight(BLACK);
@@ -54,9 +54,9 @@ void Board::initialize()
 	Knight *whiteKnight1 = new Knight(WHITE);
 	Knight *whiteKnight2 = new Knight(WHITE);
 	tiles[0][1] = blackKnight1;
-	tiles[0][SIZE-2] = blackKnight2;
-	tiles[SIZE-1][1] = whiteKnight1;
-	tiles[SIZE-1][SIZE-2] = whiteKnight2;
+	tiles[0][B_SIZE-2] = blackKnight2;
+	tiles[B_SIZE-1][1] = whiteKnight1;
+	tiles[B_SIZE-1][B_SIZE-2] = whiteKnight2;
 	
 	//Place bishops
 	Bishop *blackBishop1 = new Bishop(BLACK);
@@ -64,21 +64,21 @@ void Board::initialize()
 	Bishop *whiteBishop1 = new Bishop(WHITE);
 	Bishop *whiteBishop2 = new Bishop(WHITE);
 	tiles[0][2] = blackBishop1;
-	tiles[0][SIZE-3] = blackBishop2;
-	tiles[SIZE-1][2] = whiteBishop1;
-	tiles[SIZE-1][SIZE-3] = whiteBishop2;
+	tiles[0][B_SIZE-3] = blackBishop2;
+	tiles[B_SIZE-1][2] = whiteBishop1;
+	tiles[B_SIZE-1][B_SIZE-3] = whiteBishop2;
 	
 	//Place kings
 	King *blackKing = new King(BLACK);
 	King *whiteKing = new King(WHITE);
 	tiles[0][4] = blackKing;
-	tiles[SIZE-1][4] = whiteKing;
+	tiles[B_SIZE-1][4] = whiteKing;
 	
 	//Place queens
 	Queen *blackQueen = new Queen(BLACK);
 	Queen *whiteQueen = new Queen(WHITE);
 	tiles[0][3] = blackQueen;
-	tiles[SIZE-1][3] = whiteQueen;
+	tiles[B_SIZE-1][3] = whiteQueen;
 	
 	renderBoard();
 }
@@ -88,7 +88,7 @@ void Board::printMovable(Position position)
 {
 	if(doesTileExist(position) && !isTileEmpty(position))
 	{
-		std::vector<Position> m = tiles[position.getX()][position.getY()]->getMovableTiles(position, SIZE);
+		std::vector<Position> m = tiles[position.getX()][position.getY()]->getMovableTiles(position);
 		
 		Piece *p = tiles[position.getX()][position.getY()];
 		if(p->getRepresentation() == 'R' || p->getRepresentation() == 'Q')
@@ -121,7 +121,7 @@ bool Board::doesTileExist(Position position)
 {
 	int x = position.getX();
 	int y = position.getY();
-	if(y >= 0 && y < SIZE && x >= 0 && x < SIZE)
+	if(y >= 0 && y < B_SIZE && x >= 0 && x < B_SIZE)
 		return true;
 	return false;
 }
@@ -156,9 +156,9 @@ std::vector<Position> Board::removeBlockingStraight(std::vector<Position> positi
 	int iY = initialPosition.getY();
 
 	Position up = Position(0, -1);
-	Position down = Position(0, SIZE);
+	Position down = Position(0, B_SIZE);
 	Position left = Position(-1, 0);
-	Position right = Position(SIZE, 0);
+	Position right = Position(B_SIZE, 0);
 	
 	//Find the closest positions horizontally and vertically which are occupied by any piece
 	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
@@ -229,12 +229,12 @@ void Board::renderBoard()
 {
 	std::cout << " abcdefgh" << std::endl;
 	
-	for(int i = 0; i < SIZE; i++)
+	for(int i = 0; i < B_SIZE; i++)
 	{
 		resetConsoleColor();
-		std::cout << SIZE - i;
+		std::cout << B_SIZE - i;
 		
-		for(int j = 0; j < SIZE; j++)
+		for(int j = 0; j < B_SIZE; j++)
 		{
 			int bgColor = (i + j) % 2;
 			if(tiles[i][j] != NULL)
@@ -261,7 +261,7 @@ void Board::resetConsoleColor()
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
-int Board::getSize()
+int Board::getB_SIZE()
 {
-	return SIZE;
+	return B_SIZE;
 }
