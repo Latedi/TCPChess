@@ -79,11 +79,6 @@ void Board::initialize()
 	Queen *whiteQueen = new Queen(WHITE);
 	tiles[0][3] = blackQueen;
 	tiles[B_SIZE-1][3] = whiteQueen;
-	
-	Queen *br = new Queen(BLACK);
-	tiles[4][4] = br;
-	renderBoard();
-	printMovable(Position(4, 4));
 }
 
 //Return the positions a piece can move to.
