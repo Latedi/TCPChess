@@ -5,8 +5,9 @@
 #include <iostream>
 
 int main(int argc, char* argv[])
-{
-	Board board = Board();
-	
-	return 0;
+{		
+	//Board board = Board();
+	Game game = Game();
+	game.play();
+ 	return 0;
 }
