@@ -8,7 +8,9 @@
 #include "piece.h"
 #include "position.h"
 
-#define B_B_SIZE 8
+#ifndef B_SIZE
+#define B_SIZE 8
+#endif
 
 class Board
 {
