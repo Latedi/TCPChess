@@ -58,12 +58,12 @@ void Piece::printEmpty(int bgColor)
 	std::cout << ' ';
 }
 
-int Piece::getTeam()
+const int Piece::getTeam()
 {
 	return team;
 }
 
-char Piece::getRepresentation()
+const char Piece::getRepresentation()
 {
 	return representation;
 }
@@ -74,10 +74,15 @@ void Piece::setRepresentation(char representation)
 	this->representation = representation;
 }
 
-//Virtual function implemented individually for every piece
-std::vector<Position> Piece::getMovableTiles(Position position)
+// function implemented individually for every piece
+const std::vector<Position> Piece::getMovableTiles(Position position)
 {
+	std::cout << "Something went wrong. Piece getMovableTiles called\n";
+	std::vector<Position> p;
+	return p;
 }
+
+Piece::~Piece() {}
 
 //So we don't go out of bounds of the board
 const bool Piece::doesTileExist(Position position)
@@ -98,7 +103,9 @@ King::King(int team)
 	moved = false;
 }
 
-std::vector<Position> King::getMovableTiles(Position position)
+King::~King() {}
+
+const std::vector<Position> King::getMovableTiles(Position position)
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -119,7 +126,7 @@ std::vector<Position> King::getMovableTiles(Position position)
 	return res;
 }
 
-bool King::hasMoved()
+const bool King::hasMoved()
 {
 	return moved;
 }
@@ -136,7 +143,9 @@ Queen::Queen(int team)
 	setRepresentation('Q');
 }
 
-std::vector<Position> Queen::getMovableTiles(Position position)
+Queen::~Queen() {}
+
+const std::vector<Position> Queen::getMovableTiles(Position position)
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -180,7 +189,9 @@ Pawn::Pawn(int team)
 	moved = false;
 }
 
-std::vector<Position> Pawn::getMovableTiles(Position position)
+Pawn::~Pawn() {}
+
+const std::vector<Position> Pawn::getMovableTiles(Position position)
 {
 	int x = position.getX();
 	int y = position.getY();;
@@ -201,7 +212,7 @@ std::vector<Position> Pawn::getMovableTiles(Position position)
 	return res;
 }
 
-bool Pawn::hasMoved()
+const bool Pawn::hasMoved()
 {
 	return moved;
 }
@@ -219,7 +230,9 @@ Rook::Rook(int team)
 	moved = false;
 }
 
-std::vector<Position> Rook::getMovableTiles(Position position)
+Rook::~Rook() {}
+
+const std::vector<Position> Rook::getMovableTiles(Position position)
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -238,7 +251,7 @@ std::vector<Position> Rook::getMovableTiles(Position position)
 	return res;
 }
 
-bool Rook::hasMoved()
+const bool Rook::hasMoved()
 {
 	return moved;
 }
@@ -255,7 +268,9 @@ Knight::Knight(int team)
 	setRepresentation('N');
 }
 
-std::vector<Position> Knight::getMovableTiles(Position position)
+Knight::~Knight() {}
+
+const std::vector<Position> Knight::getMovableTiles(Position position)
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -288,7 +303,9 @@ Bishop::Bishop(int team)
 	setRepresentation('B');
 }
 
-std::vector<Position> Bishop::getMovableTiles(Position position)
+Bishop::~Bishop() {}
+
+const std::vector<Position> Bishop::getMovableTiles(Position position)
 {
 	std::vector<Position> res;
 	int x = position.getX();

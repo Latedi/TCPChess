@@ -2,9 +2,14 @@
 
 Game::Game()
 {
-	board = Board();
+	board = new Board();
 }
-	
+
+Game::~Game()
+{
+	delete board;
+}
+
 void Game::play()
 {
 	bool gameOver = false;

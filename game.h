@@ -14,9 +14,10 @@
 class Game
  {
 private:
- 	Board board;
+ 	Board *board;
  public:
  	Game();
+	~Game();
 	void play();
 	bool parse(std::string &input);
  };

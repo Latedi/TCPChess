@@ -21,12 +21,13 @@ protected:
 public:
 	Piece();
 	Piece(int team);
-	virtual std::vector<Position> getMovableTiles(Position position);
+	virtual ~Piece();
+	const virtual std::vector<Position> getMovableTiles(Position position);
 	void printMe(int bgColor);
 	void printEmpty(int bgColor);
 	const bool doesTileExist(Position position);
-	int getTeam();
-	char getRepresentation();
+	const int getTeam();
+	const char getRepresentation();
 };
 
 class King : public Piece
@@ -35,8 +36,9 @@ private:
 	bool moved;
 public:
 	King(int team);
-	virtual std::vector<Position> getMovableTiles(Position position);
-	bool hasMoved();
+	virtual ~King();
+	const virtual std::vector<Position> getMovableTiles(Position position);
+	const bool hasMoved();
 	void setMoved(bool moved);
 };
 
@@ -44,7 +46,8 @@ class Queen : public Piece
 {
 public:
 	Queen(int team);
-	virtual std::vector<Position> getMovableTiles(Position position);
+	virtual ~Queen();
+	const virtual std::vector<Position> getMovableTiles(Position position);
 };
 
 class Pawn : public Piece
@@ -53,8 +56,9 @@ private:
 	bool moved;
 public:
 	Pawn(int team);
-	virtual std::vector<Position> getMovableTiles(Position position);
-	bool hasMoved();
+	virtual ~Pawn();
+	const virtual std::vector<Position> getMovableTiles(Position position);
+	const bool hasMoved();
 	void setMoved(bool moved);
 };
 
@@ -64,8 +68,9 @@ private:
 	bool moved;
 public:
 	Rook(int team);
-	virtual std::vector<Position> getMovableTiles(Position position);
-	bool hasMoved();
+	virtual ~Rook();
+	const virtual std::vector<Position> getMovableTiles(Position position);
+	const bool hasMoved();
 	void setMoved(bool moved);
 };
 
@@ -73,14 +78,16 @@ class Knight : public Piece
 {
 public:
 	Knight(int team);
-	virtual std::vector<Position> getMovableTiles(Position position);
+	virtual ~Knight();
+	const virtual std::vector<Position> getMovableTiles(Position position);
 };
 
 class Bishop : public Piece
 {
 public:
 	Bishop(int team);
-	virtual std::vector<Position> getMovableTiles(Position position);
+	virtual ~Bishop();
+	const virtual std::vector<Position> getMovableTiles(Position position);
 };
 
 #endif /* PIECE_H */
