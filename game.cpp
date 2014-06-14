@@ -17,10 +17,6 @@ void Game::play()
 
 	Position from(0,0);
 	Position to(4,4);
-
-	std::cout << "testing add/remove\n";
-	board->movePiece(from, to);
-	board->renderBoard();
 	
 	//keep prompting for input until the user quits or the game ends
 	while(!gameOver)
@@ -28,6 +24,7 @@ void Game::play()
 		std::cout << "Please enter a move (type 'quit' to exit)\n";
 		std::getline(std::cin,input);
 		gameOver = parse(input);
+		board->renderBoard();
 	}
 	std::cout << "GG\n";
 	return;
@@ -74,7 +71,7 @@ bool Game::parse(std::string &input)
 			}
 		}
 		std::cout << "Moving from " << commandWords[1] << " to " << commandWords[2] << "\n";
-		//replace cout with call to command execution
+		board->movePiece(stringToPosition(commandWords[1]), stringToPosition(commandWords[2]));
 	}
 	//parse castle command
 	else if(commandWords[0] == "castle")
@@ -93,4 +90,11 @@ bool Game::parse(std::string &input)
 	return false;
 }
 
-
+//translates inputted string to position. e.g. string "a1" becomes Position(0,0)
+Position Game::stringToPosition(std::string word)
+{
+	int x = (int) word.at(0) - CHARMODIFIER;
+	int y = (int) word.at(1) - INTMODIFIER;
+	Position position(x-1, y-1);
+	return position;
+}

@@ -3,6 +3,8 @@
 
 #define PLAYERS 2
 #define COMMANDNUM 2
+#define CHARMODIFIER 96
+#define INTMODIFIER 48
 
 #include "board.h"
 #include <string>
@@ -15,6 +17,7 @@ class Game
  {
 private:
  	Board *board;
+	Position stringToPosition(std::string word);
  public:
  	Game();
 	~Game();

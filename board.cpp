@@ -340,16 +340,6 @@ int Board::getB_SIZE()
 	return B_SIZE;
 }
 
-//returns the position that the string in the parameter represents
-//assumes that the string has already been checked and is valid
-Piece* Board::getPiece(std::string name)
-{
-	int x = (int) name.at(0) - 96;
-	std::cout << "modified char " << name.at(0) << "to " << x << "\n";
-	int y = name.at(1);
-	return tiles[x-1][y-1];
-}
-
 //add a piece to position. Will remove any existing piece at that location.
 void Board::addPiece(Piece* piece, Position position)
 {

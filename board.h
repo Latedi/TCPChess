@@ -33,7 +33,6 @@ public:
 	void printMovable(Position position);
 	void printPositionVector(std::vector<Position> positions);
 	std::vector<Position> getMovable(Position position);
-	Piece* getPiece(std::string name);
 	bool movePiece(Position from, Position to);
 };
 
