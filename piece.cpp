@@ -11,6 +11,8 @@ Piece::Piece(int team)
 	setRepresentation('-');
 }
 
+Piece::~Piece() {}
+
 //Print the piece with correct colors
 void Piece::printMe(int bgColor)
 {
@@ -82,8 +84,6 @@ const std::vector<Position> Piece::getMovableTiles(Position position)
 	return p;
 }
 
-Piece::~Piece() {}
-
 //So we don't go out of bounds of the board
 const bool Piece::doesTileExist(Position position)
 {
@@ -93,6 +93,12 @@ const bool Piece::doesTileExist(Position position)
 	if(y < 0 || y >= B_SIZE || x < 0 || x >= B_SIZE)
 		return false;
 	return true;
+}
+
+const void Piece::printData()
+{
+	std::cout << "Representation: " << representation << std::endl;
+	std::cout << "Team: " << team << std::endl;
 }
 
 /* KING */
@@ -196,6 +202,7 @@ const std::vector<Position> Pawn::getMovableTiles(Position position)
 	int x = position.getX();
 	int y = position.getY();;
 	std::vector<Position> res;
+	
 	if(team == BLACK)
 	{
 		res.push_back(Position(x, y+1));

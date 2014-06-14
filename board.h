@@ -31,6 +31,8 @@ public:
 	void printMovable(Position position);
 	void printPositionVector(std::vector<Position> positions);
 	std::vector<Position> getMovable(Position position);
+	bool isTileTeam(Position pos, int team);
+	bool gameOver();
 };
 
 #endif /* BOARD_H */

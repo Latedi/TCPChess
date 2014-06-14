@@ -81,31 +81,6 @@ void Board::initialize()
 	tiles[B_SIZE-1][3] = whiteQueen;
 }
 
-//Return the positions a piece can move to.
-std::vector<Position> Board::getMovable(Position position)
-{
-	std::vector<Position> res;
-	
-	if(doesTileExist(position) && !isTileEmpty(position))
-	{
-		res = tiles[position.getX()][position.getY()]->getMovableTiles(position);
-		
-		Piece *p = tiles[position.getX()][position.getY()];
-		if(p->getRepresentation() == 'R' || p->getRepresentation() == 'Q')
-		{
-			res = removeBlockingStraight(res, position);
-		}
-		if(p->getRepresentation() == 'B' || p->getRepresentation() == 'Q')
-		{
-			res = removeBlockingDiagonal(res, position);
-		}
-		
-		res = removeFriendly(res, tiles[position.getX()][position.getY()]->getTeam());
-	}
-	
-	return res;
-}
-
 //Print all tiles a piece can move to. Used for debug purposes.
 void Board::printMovable(Position position)
 {
@@ -116,7 +91,7 @@ void Board::printMovable(Position position)
 //See if there is a already a piece on the tile or not.
 bool Board::isTileEmpty(Position position)
 {
-	if(tiles[position.getX()][position.getY()] == NULL)
+	if(tiles[position.getY()][position.getX()] == NULL)
 		return true;
 	return false;
 }
@@ -131,6 +106,58 @@ bool Board::doesTileExist(Position position)
 	return false;
 }
 
+//Check if a tile belongs to a team
+bool Board::isTileTeam(Position pos, int team)
+{
+	if(doesTileExist(pos) && !isTileEmpty(pos))
+	{
+		if(tiles[pos.getY()][pos.getX()]->getTeam() == team)
+			return true;
+	}
+	
+	return false;
+}
+
+//See if there's a checkmate
+bool Board::gameOver()
+{
+	return false;
+}
+
+//Return the positions a piece can move to.
+std::vector<Position> Board::getMovable(Position position)
+{
+	int x = position.getX();
+	int y = position.getY();
+	std::cout << "Position: " << position.toString() << std::endl;
+	tiles[y][x]->printData();
+	std::vector<Position> res;
+	
+	if(doesTileExist(position) && !isTileEmpty(position))
+	{
+		res = tiles[y][x]->getMovableTiles(position);
+		printPositionVector(res);
+		
+		Piece *p = tiles[y][x];
+		
+		if(p->getRepresentation() == 'R' || p->getRepresentation() == 'Q')
+		{
+			res = removeBlockingStraight(res, position);
+			printPositionVector(res);
+		}
+		if(p->getRepresentation() == 'B' || p->getRepresentation() == 'Q')
+		{
+			res = removeBlockingDiagonal(res, position);
+			printPositionVector(res);
+		}
+		
+		res = removeFriendly(res, p->getTeam());
+		printPositionVector(res);
+	}
+	
+	return res;
+}
+
 //Remove all occurances of pieces from a team from a list of positions.
 std::vector<Position> Board::removeFriendly(std::vector<Position> positions, int team)
 {
@@ -139,7 +166,7 @@ std::vector<Position> Board::removeFriendly(std::vector<Position> positions, int
 	{
 		if(!isTileEmpty(*it))
 		{
-			if(tiles[it->getX()][it->getY()]->getTeam() == team)
+			if(tiles[it->getY()][it->getX()]->getTeam() == team)
 			{
 				positions.erase(it);
 			}
@@ -289,6 +316,8 @@ std::vector<Position> Board::removeBlockingDiagonal(std::vector<Position> positi
 //Helpful when debugging
 void Board::printPositionVector(std::vector<Position> positions)
 {
+	std::cout << "Printing position vector of size " << positions.size() << ":" << std::endl;
+	
 	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
 	{
 		if(doesTileExist(*it))

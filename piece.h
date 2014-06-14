@@ -28,6 +28,7 @@ public:
 	const bool doesTileExist(Position position);
 	const int getTeam();
 	const char getRepresentation();
+	const void printData();
 };
 
 class King : public Piece
