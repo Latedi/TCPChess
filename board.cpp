@@ -339,3 +339,61 @@ int Board::getB_SIZE()
 {
 	return B_SIZE;
 }
+
+//returns the position that the string in the parameter represents
+//assumes that the string has already been checked and is valid
+Piece* Board::getPiece(std::string name)
+{
+	int x = (int) name.at(0) - 96;
+	std::cout << "modified char " << name.at(0) << "to " << x << "\n";
+	int y = name.at(1);
+	return tiles[x-1][y-1];
+}
+
+//add a piece to position. Will remove any existing piece at that location.
+void Board::addPiece(Piece* piece, Position position)
+{
+	if(!isTileEmpty(position))
+	{
+		removePiece(position);
+	}
+	tiles[position.getX()][position.getY()] = piece;
+	std::cout << "Team " << piece->getTeam() << "'s " << piece->getRepresentation() << " now at " << 
+		position.getX() << " " << position.getY() << "\n";
+	return;
+}
+
+//if there is a piece at the given position, then that piece is removed
+void Board::removePiece(Position position)
+{
+	if(tiles[position.getX()][position.getY()] != NULL)
+	{
+		std::cout << "Team " << tiles[position.getX()][position.getY()]->getTeam() << "'s " << 
+			tiles[position.getX()][position.getY()]->getRepresentation() << 
+			" removed from " << position.getX() << " " << position.getY() << "\n";
+		tiles[position.getX()][position.getY()] = NULL;
+	}
+	else
+	{
+		std::cout << "Nothing to remove at this position\n";
+	}
+	return;
+}
+
+//moves a piece from one location to another
+bool Board::movePiece(Position from, Position to)
+{
+	Piece* piece = tiles[from.getX()][from.getY()];
+	if(piece == NULL)
+	{
+		std::cout << "Cannot move because there is nothing at this location.";
+		return false;
+	}
+	else
+	{
+		//need to add checks to make sure move is valid first
+		removePiece(from);
+		addPiece(piece, to);
+	}
+	return true;
+}

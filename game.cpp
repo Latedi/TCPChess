@@ -14,6 +14,13 @@ void Game::play()
 {
 	bool gameOver = false;
 	std::string input = "";
+
+	Position from(0,0);
+	Position to(4,4);
+
+	std::cout << "testing add/remove\n";
+	board.movePiece(from, to);
+	board.renderBoard();
 	
 	//keep prompting for input until the user quits or the game ends
 	while(!gameOver)
