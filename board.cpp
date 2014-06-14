@@ -341,24 +341,16 @@ int Board::getB_SIZE()
 }
 
 //add a piece to position. Will remove any existing piece at that location.
-bool Board::addPiece(Piece* piece, Position position)
+void Board::addPiece(Piece* piece, Position position)
 {
 	if(!isTileEmpty(position))
 	{
-		if(tiles[position.getX()][position.getY()]->getTeam() != piece->getTeam())
-		{
-			removePiece(position);
-		}
-		else
-		{
-			std::cout << "Error: a piece cannot move to a position already containing a piece of the same team.\n";
-			return false;
-		}
+		removePiece(position);
 	}
 	tiles[position.getX()][position.getY()] = piece;
 	std::cout << "Team " << piece->getTeam() << "'s " << piece->getRepresentation() << " now at " << 
 		position.getX() << " " << position.getY() << "\n";
-	return true;
+	return;
 }
 
 //if there is a piece at the given position, then that piece is removed
@@ -382,50 +374,16 @@ void Board::removePiece(Position position)
 bool Board::movePiece(Position from, Position to)
 {
 	Piece* piece = tiles[from.getX()][from.getY()];
-	//bool movable = false;
-
 	if(piece == NULL)
 	{
-		std::cout << "Cannot move because there is nothing at this location.\n";
+		std::cout << "Cannot move because there is nothing at this location.";
 		return false;
 	}
 	else
 	{
-		if(!doesTileExist(from) || !doesTileExist(to))
-		{
-			std::cout << "Cannot move because inputted position is invalid.\n";
-		}
-		else
-		{	/*
-			std::vector<Position>::const_iterator i = getMovable(from).begin();
-			while(i != getMovable(from).end())
-			{
-				if(((*i).getX() == to.getX()) && ((*i).getY() == to.getY()))
-				{
-					movable = true;
-					break;
-				}
-				i++;
-			}
-			if(movable)
-			{
-			*/
-				//try to move the piece to the new position, if succsessful then remove from old position
-				if(addPiece(piece, to))
-				{
-					removePiece(from);
-				}
-				else
-				{
-					return false;
-				}
-			/*}
-			else
-			{
-				std::cout << "This piece cannot move here!\n";
-			}
-			*/
-		}
+		//need to add checks to make sure move is valid first
+		removePiece(from);
+		addPiece(piece, to);
 	}
 	return true;
 }

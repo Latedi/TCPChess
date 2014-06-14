@@ -12,8 +12,8 @@ private:
 public:
 	Position();
 	Position(int x, int y);
-	int getX() const { return positionX; };
-	int getY() const { return positionY; };
+	int getX() { return positionX; };
+	int getY() { return positionY; };
 	std::string toString();
 };
 
