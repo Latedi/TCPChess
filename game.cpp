@@ -14,17 +14,19 @@ void Game::play()
 {
 	bool gameOver = false;
 	std::string input = "";
-
-	Position from(0,0);
-	Position to(4,4);
 	
+	board->renderBoard();
+
 	//keep prompting for input until the user quits or the game ends
 	while(!gameOver)
 	{
 		std::cout << "Please enter a move (type 'quit' to exit)\n";
 		std::getline(std::cin,input);
-		gameOver = parse(input);
-		board->renderBoard();
+		if(input != "")
+		{
+			gameOver = parse(input);
+			board->renderBoard();
+		}
 	}
 	std::cout << "GG\n";
 	return;
@@ -71,7 +73,10 @@ bool Game::parse(std::string &input)
 			}
 		}
 		std::cout << "Moving from " << commandWords[1] << " to " << commandWords[2] << "\n";
-		board->movePiece(stringToPosition(commandWords[1]), stringToPosition(commandWords[2]));
+		if(!board->movePiece(stringToPosition(commandWords[1]), stringToPosition(commandWords[2])))
+		{
+			std::cout << "Move failed.\n";
+		}
 	}
 	//parse castle command
 	else if(commandWords[0] == "castle")
@@ -93,8 +98,12 @@ bool Game::parse(std::string &input)
 //translates inputted string to position. e.g. string "a1" becomes Position(0,0)
 Position Game::stringToPosition(std::string word)
 {
-	int x = (int) word.at(0) - CHARMODIFIER;
-	int y = (int) word.at(1) - INTMODIFIER;
+	//change chars from ASCII values to the correct int value
+	int y = (int) word.at(0) - CHARMODIFIER;
+	int x = (int) word.at(1) - INTMODIFIER;
+
+	//reverse the x co-ordinate because the array is stored in reverse order to the way the board is labelled
+	x = G_SIZE - x;
 	Position position(x-1, y-1);
 	return position;
 }

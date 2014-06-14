@@ -5,6 +5,7 @@
 #define COMMANDNUM 2
 #define CHARMODIFIER 96
 #define INTMODIFIER 48
+#define G_SIZE 9
 
 #include "board.h"
 #include <string>

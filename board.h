@@ -23,7 +23,7 @@ private:
 	std::vector<Position> removeFriendly(std::vector<Position> positions, int team);
 	std::vector<Position> removeBlockingStraight(std::vector<Position> positions, Position initialPosition);
 	std::vector<Position> removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition);
-	void addPiece(Piece* piece, Position position);
+	bool addPiece(Piece* piece, Position position);
 	void removePiece(Position position);
 public:
 	Board();
