@@ -368,3 +368,51 @@ int Board::getB_SIZE()
 {
 	return B_SIZE;
 }
+
+//add a piece to position. Will remove any existing piece at that location.
+void Board::addPiece(Piece* piece, Position position)
+{
+	if(!isTileEmpty(position))
+	{
+		removePiece(position);
+	}
+	tiles[position.getY()][position.getX()] = piece;
+	std::cout << "Team " << piece->getTeam() << "'s " << piece->getRepresentation() << " now at " << 
+		position.getX() << " " << position.getY() << "\n";
+	return;
+}
+
+//if there is a piece at the given position, then that piece is removed
+void Board::removePiece(Position position)
+{
+	if(tiles[position.getY()][position.getX()] != NULL)
+	{
+		std::cout << "Team " << tiles[position.getX()][position.getY()]->getTeam() << "'s " << 
+			tiles[position.getY()][position.getX()]->getRepresentation() << 
+			" removed from " << position.getX() << " " << position.getY() << "\n";
+		tiles[position.getY()][position.getX()] = NULL;
+	}
+	else
+	{
+		std::cout << "Nothing to remove at this position\n";
+	}
+	return;
+}
+
+//moves a piece from one location to another
+bool Board::movePiece(Position from, Position to)
+{
+	Piece* piece = tiles[from.getY()][from.getX()];
+	if(piece == NULL)
+	{
+		std::cout << "Cannot move because there is nothing at this location.";
+		return false;
+	}
+	else
+	{
+		//need to add checks to make sure move is valid first
+		removePiece(from);
+		addPiece(piece, to);
+	}
+	return true;
+}

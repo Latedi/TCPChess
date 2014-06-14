@@ -3,6 +3,8 @@
 Game::Game()
 {
 	board = new Board();
+	xOffset = (int) 'a';
+	yOffset = (int) '1';
 }
 
 Game::~Game()
@@ -17,7 +19,7 @@ void Game::play()
 	bool validInput;
 	int currentPlayer = WHITE;
 	std::string input = "";
-	
+
 	//keep prompting for input until the user quits or the game ends
 	while(!gameOver)
 	{
@@ -77,7 +79,6 @@ bool Game::parse(std::string &input, int team)
 				return false;
 			}
 		}
-		
 		//The input is valid, try to execute the move
 		return executeMove(commandWords[1], commandWords[2], team);
 	}
@@ -110,8 +111,8 @@ bool Game::parse(std::string &input, int team)
 //Try to move a piece from one tile to another
 bool Game::executeMove(std::string p1, std::string p2, int team)
 {
-	Position origin = inputToPosition(p1);
-	Position destination = inputToPosition(p2);
+	Position origin = stringToPosition(p1);
+	Position destination = stringToPosition(p2);
 	
 	if(board->isTileTeam(origin, team))
 	{
@@ -137,23 +138,26 @@ void Game::printHelp()
 	std::cout << "lul tough luck son\n";
 }
 
-//Translate input to a board position
-Position Game::inputToPosition(std::string coordinate)
+//Translate input to a board position. Keep this in comments if something goes wrong.
+/* Position Game::inputToPosition(std::string coordinate)
 {
 	int xOffset = (int) 'a';
 	int x = (int) coordinate[0] - xOffset;
 	int yOffset = (int) '1';
 	int y = (int) 7 - (coordinate[1] - yOffset);
 	return Position(x, y);
-}
+} */ 
 
-std::string Game::PositionToString(Position position)
+//translates inputted string to position. e.g. string "a1" becomes Position(0,0)
+Position Game::stringToPosition(std::string word)
 {
-	char x = (char) (position.getX() + (int) 'a');
-	char y = (char) (7 + position.getY() + (int) '1');
-	std::stringstream ss;
-	std::string res;
-	ss << x << y;
-	ss >> res;
-	return res;
+	//change chars from ASCII values to the correct int value
+	int x = (int) word.at(0) - xOffset;
+	int y = (int) word.at(1) - yOffset;
+
+	//reverse the y co-ordinate because the array is stored in reverse order to the way the board is labelled
+	y = B_SIZE - y - 1;
+	Position position(x, y);
+	std::cout << word << " = Position: " << position.toString() << std::endl;
+	return position;
 }

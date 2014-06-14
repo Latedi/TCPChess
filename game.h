@@ -17,12 +17,14 @@ class Game
  {
 private:
  	Board *board;
+	int xOffset;
+	int yOffset;
 	bool parse(std::string &input, int team);
 	bool executeMove(std::string p1, std::string p2, int team);
 	void printHelp();
-	Position inputToPosition(std::string coordinate);
-	std::string PositionToString(Position position);
+	//Position inputToPosition(std::string coordinate);
 	void changeTeam(int &team);
+	Position stringToPosition(std::string word);
  public:
  	Game();
 	~Game();
