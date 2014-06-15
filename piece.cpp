@@ -14,7 +14,7 @@ Piece::Piece(int team)
 Piece::~Piece() {}
 
 //Print the piece with correct colors
-void Piece::printMe(int bgColor)
+void Piece::printMe(int bgColor) const
 {
 	HANDLE hConsole;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -41,7 +41,7 @@ void Piece::printMe(int bgColor)
 }
 
 //Print an empty tile
-void Piece::printEmpty(int bgColor)
+void Piece::printEmpty(int bgColor) const
 {
 	HANDLE hConsole;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -60,17 +60,17 @@ void Piece::printEmpty(int bgColor)
 	std::cout << ' ';
 }
 
-const int Piece::getTeam()
+int Piece::getTeam() const
 {
 	return team;
 }
 
-const char Piece::getRepresentation()
+char Piece::getRepresentation() const
 {
 	return representation;
 }
 
-const bool Piece::hasMoved()
+bool Piece::hasMoved() const
 {
 	return moved;
 }
@@ -87,7 +87,7 @@ void Piece::setRepresentation(char representation)
 }
 
 // function implemented individually for every piece
-const std::vector<Position> Piece::getMovableTiles(Position position)
+std::vector<Position> Piece::getMovableTiles(Position position) const
 {
 	std::cout << "Something went wrong. Piece getMovableTiles called\n";
 	std::vector<Position> p;
@@ -95,7 +95,7 @@ const std::vector<Position> Piece::getMovableTiles(Position position)
 }
 
 //So we don't go out of bounds of the board
-const bool Piece::doesTileExist(Position position)
+bool Piece::doesTileExist(Position position) const
 {
 	int x = position.getX();
 	int y = position.getY();
@@ -105,7 +105,7 @@ const bool Piece::doesTileExist(Position position)
 	return true;
 }
 
-const void Piece::printData()
+void Piece::printData() const
 {
 	std::cout << "Representation: " << representation << std::endl;
 	std::cout << "Team: " << team << std::endl;
@@ -120,7 +120,7 @@ King::King(int team)
 
 King::~King() {}
 
-const std::vector<Position> King::getMovableTiles(Position position)
+std::vector<Position> King::getMovableTiles(Position position) const
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -150,7 +150,7 @@ Queen::Queen(int team)
 
 Queen::~Queen() {}
 
-const std::vector<Position> Queen::getMovableTiles(Position position)
+std::vector<Position> Queen::getMovableTiles(Position position) const
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -195,7 +195,7 @@ Pawn::Pawn(int team)
 
 Pawn::~Pawn() {}
 
-const std::vector<Position> Pawn::getMovableTiles(Position position)
+std::vector<Position> Pawn::getMovableTiles(Position position) const
 {
 	int x = position.getX();
 	int y = position.getY();;
@@ -226,7 +226,7 @@ Rook::Rook(int team)
 
 Rook::~Rook() {}
 
-const std::vector<Position> Rook::getMovableTiles(Position position)
+std::vector<Position> Rook::getMovableTiles(Position position) const
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -254,7 +254,7 @@ Knight::Knight(int team)
 
 Knight::~Knight() {}
 
-const std::vector<Position> Knight::getMovableTiles(Position position)
+std::vector<Position> Knight::getMovableTiles(Position position) const
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -289,7 +289,7 @@ Bishop::Bishop(int team)
 
 Bishop::~Bishop() {}
 
-const std::vector<Position> Bishop::getMovableTiles(Position position)
+std::vector<Position> Bishop::getMovableTiles(Position position) const
 {
 	std::vector<Position> res;
 	int x = position.getX();

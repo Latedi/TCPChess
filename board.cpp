@@ -79,19 +79,17 @@ void Board::initialize()
 	Queen *whiteQueen = new Queen(WHITE);
 	tiles[0][3] = blackQueen;
 	tiles[B_SIZE-1][3] = whiteQueen;
-	
-	getThreatenedPositions(BLACK);
 }
 
 //Print all tiles a piece can move to. Used for debug purposes.
-void Board::printMovable(Position position)
+void Board::printMovable(Position position) const
 {
 	std::vector<Position> positionVector = getMovable(position);
 	printPositionVector(positionVector);
 }
 
 //See if there is a already a piece on the tile or not.
-bool Board::isTileEmpty(Position position)
+bool Board::isTileEmpty(Position position) const
 {
 	if(tiles[position.getY()][position.getX()] == NULL)
 		return true;
@@ -99,7 +97,7 @@ bool Board::isTileEmpty(Position position)
 }
 
 //Check if the tile exists on the board. ie a tile with index -1 2 doesn't exist.
-bool Board::doesTileExist(Position position)
+bool Board::doesTileExist(Position position) const
 {
 	int x = position.getX();
 	int y = position.getY();
@@ -109,7 +107,7 @@ bool Board::doesTileExist(Position position)
 }
 
 //Check if a tile belongs to a team
-bool Board::isTileTeam(Position pos, int team)
+bool Board::isTileTeam(Position pos, int team) const
 {
 	if(doesTileExist(pos) && !isTileEmpty(pos))
 	{
@@ -121,13 +119,13 @@ bool Board::isTileTeam(Position pos, int team)
 }
 
 //See if there's a checkmate
-bool Board::gameOver()
+bool Board::gameOver() const
 {
 	return false;
 }
 
 //Return the positions a piece can move to.
-std::vector<Position> Board::getMovable(Position position)
+std::vector<Position> Board::getMovable(Position position) const
 {
 	int x = position.getX();
 	int y = position.getY();
@@ -154,7 +152,7 @@ std::vector<Position> Board::getMovable(Position position)
 }
 
 //Remove all occurances of pieces from a team from a list of positions.
-std::vector<Position> Board::removeFriendly(std::vector<Position> positions, int team)
+std::vector<Position> Board::removeFriendly(std::vector<Position> positions, int team) const
 {
 	std::vector<Position>::iterator it = positions.begin();
 	while(it != positions.end())
@@ -177,7 +175,7 @@ std::vector<Position> Board::removeFriendly(std::vector<Position> positions, int
 }
 
 //Remove positions from the positions array which are block by other pieces from the position initialPosition. Straight
-std::vector<Position> Board::removeBlockingStraight(std::vector<Position> positions, Position initialPosition)
+std::vector<Position> Board::removeBlockingStraight(std::vector<Position> positions, Position initialPosition) const
 {
 	int iX = initialPosition.getX();
 	int iY = initialPosition.getY();
@@ -234,7 +232,7 @@ std::vector<Position> Board::removeBlockingStraight(std::vector<Position> positi
 }
 
 //Remove positions from the positions array which are block by other pieces from the position initialPosition. Diagonally
-std::vector<Position> Board::removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition)
+std::vector<Position> Board::removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition) const
 {
 	int iX = initialPosition.getX();
 	int iY = initialPosition.getY();
@@ -309,7 +307,7 @@ std::vector<Position> Board::removeBlockingDiagonal(std::vector<Position> positi
 }
 
 //Helpful when debugging
-void Board::printPositionVector(std::vector<Position> positions)
+void Board::printPositionVector(std::vector<Position> positions) const
 {
 	std::cout << "Printing position vector of size " << positions.size() << ":" << std::endl;
 	
@@ -323,7 +321,7 @@ void Board::printPositionVector(std::vector<Position> positions)
 }
 
 //Print the entire board. Pieces are responsible for printing themselves
-void Board::renderBoard()
+void Board::renderBoard() const
 {
 	std::cout << " abcdefgh" << std::endl;
 	
@@ -352,14 +350,14 @@ void Board::renderBoard()
 }
 
 //Reset the console color so we don't get a funky looking command line
-void Board::resetConsoleColor()
+void Board::resetConsoleColor() const
 {
 	HANDLE hConsole;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
-int Board::getB_SIZE()
+int Board::getB_SIZE() const
 {
 	return B_SIZE;
 }
@@ -425,7 +423,7 @@ bool Board::movePiece(Position from, Position to, int team)
 }
 
 //See if a player is checked
-bool Board::isCheck(int team)
+bool Board::isCheck(int team) const
 {
 	//Find the king
 	Position kingPos;
@@ -461,7 +459,7 @@ bool Board::isCheck(int team)
 }
 
 //Find all threatened positions for a team.
-std::vector<Position> Board::getThreatenedPositions(int team)
+std::vector<Position> Board::getThreatenedPositions(int team) const
 {
 	int enemyTeam = WHITE;
 	if(team == WHITE);

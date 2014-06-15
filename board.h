@@ -18,27 +18,27 @@ class Board
 private:
 	Piece * tiles[B_SIZE][B_SIZE];
 	void initialize();
-	void resetConsoleColor();
-	bool isTileEmpty(Position position);
-	bool doesTileExist(Position position);
-	std::vector<Position> removeFriendly(std::vector<Position> positions, int team);
-	std::vector<Position> removeBlockingStraight(std::vector<Position> positions, Position initialPosition);
-	std::vector<Position> removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition);
+	void resetConsoleColor() const;
+	bool isTileEmpty(Position position) const;
+	bool doesTileExist(Position position) const;
+	std::vector<Position> removeFriendly(std::vector<Position> positions, int team) const;
+	std::vector<Position> removeBlockingStraight(std::vector<Position> positions, Position initialPosition) const;
+	std::vector<Position> removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition) const;
 	void addPiece(Piece* piece, Position newPos, Position oldPos);
 	void removePiece(Position position);
-	std::vector<Position> getThreatenedPositions(int team);
+	std::vector<Position> getThreatenedPositions(int team) const;
 public:
 	Board();
 	~Board();
-	void renderBoard();
-	int getB_SIZE();
-	void printMovable(Position position);
-	void printPositionVector(std::vector<Position> positions);
-	std::vector<Position> getMovable(Position position);
-	bool isTileTeam(Position pos, int team);
-	bool gameOver();
+	void renderBoard() const;
+	int getB_SIZE() const;
+	void printMovable(Position position) const;
+	void printPositionVector(std::vector<Position> positions) const;
+	std::vector<Position> getMovable(Position position) const;
+	bool isTileTeam(Position pos, int team) const;
+	bool gameOver() const;
 	bool movePiece(Position from, Position to, int team);
-	bool isCheck(int team);
+	bool isCheck(int team) const;
 };
 
 #endif /* BOARD_H */

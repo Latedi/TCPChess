@@ -23,14 +23,14 @@ public:
 	Piece();
 	Piece(int team);
 	virtual ~Piece();
-	const virtual std::vector<Position> getMovableTiles(Position position);
-	void printMe(int bgColor);
-	void printEmpty(int bgColor);
-	const bool doesTileExist(Position position);
-	const int getTeam();
-	const char getRepresentation();
-	const void printData();
-	const bool hasMoved();
+	virtual std::vector<Position> getMovableTiles(Position position) const;
+	void printMe(int bgColor) const;
+	void printEmpty(int bgColor) const;
+	bool doesTileExist(Position position) const;
+	int getTeam() const;
+	char getRepresentation() const;
+	void printData() const;
+	bool hasMoved() const;
 	void setMoved(bool moved);
 };
 
@@ -39,7 +39,7 @@ class King : public Piece
 public:
 	King(int team);
 	virtual ~King();
-	const virtual std::vector<Position> getMovableTiles(Position position);
+	virtual std::vector<Position> getMovableTiles(Position position) const;
 };
 
 class Queen : public Piece
@@ -47,7 +47,7 @@ class Queen : public Piece
 public:
 	Queen(int team);
 	virtual ~Queen();
-	const virtual std::vector<Position> getMovableTiles(Position position);
+	virtual std::vector<Position> getMovableTiles(Position position) const;
 };
 
 class Pawn : public Piece
@@ -55,7 +55,7 @@ class Pawn : public Piece
 public:
 	Pawn(int team);
 	virtual ~Pawn();
-	const virtual std::vector<Position> getMovableTiles(Position position);
+	virtual std::vector<Position> getMovableTiles(Position position) const;
 };
 
 class Rook : public Piece
@@ -63,7 +63,7 @@ class Rook : public Piece
 public:
 	Rook(int team);
 	virtual ~Rook();
-	const virtual std::vector<Position> getMovableTiles(Position position);
+	virtual std::vector<Position> getMovableTiles(Position position) const;
 };
 
 class Knight : public Piece
@@ -71,7 +71,7 @@ class Knight : public Piece
 public:
 	Knight(int team);
 	virtual ~Knight();
-	const virtual std::vector<Position> getMovableTiles(Position position);
+	virtual std::vector<Position> getMovableTiles(Position position) const;
 };
 
 class Bishop : public Piece
@@ -79,7 +79,7 @@ class Bishop : public Piece
 public:
 	Bishop(int team);
 	virtual ~Bishop();
-	const virtual std::vector<Position> getMovableTiles(Position position);
+	virtual std::vector<Position> getMovableTiles(Position position) const;
 };
 
 #endif /* PIECE_H */
