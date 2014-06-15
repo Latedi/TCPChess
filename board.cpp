@@ -422,12 +422,14 @@ bool Board::movePiece(Position from, Position to, int team)
 	return false;
 }
 
-//See if a player is checked
-bool Board::isCheck(int team) const
+//See if a player is checked.
+//Returns 0 for nothing, 1 for check, 2 for checkmate and -1 for error.
+int Board::isCheckOrMate(int team) const
 {
 	//Find the king
 	Position kingPos;
 	bool kingFound = false;
+	int res = 0;
 	
 	for(int i = 0; i < B_SIZE; i++)
 	{
@@ -445,17 +447,66 @@ bool Board::isCheck(int team) const
 	}
 	
 	if(!kingFound)
+	{
 		std::cout << "Error: no King found for team " << team << std::endl;
+		return -1;
+	}
 		
 	//See if the king is threatened and checked
 	std::vector<Position> threatenedPositions = getThreatenedPositions(team);
 	for(std::vector<Position>::iterator it; it != threatenedPositions.end(); it++)
 	{
 		if(*it == kingPos)
-			return true;
+			res = 1;
 	}
+	
+	//If all tiles near the king is either friendly or threatened the king is checkmate
+	//This will be problematic as we also need to check what pieces the king can kill to stay safe.
+	//Will add that... some other time.
+	std::vector<Position> deniedPositions;
+	for(int xOffset = -1; xOffset <= 1; xOffset++)
+	{
+		for(int yOffset = -1; yOffset <= 1; yOffset++)
+		{
+			if(xOffset != 0 || yOffset != 0)
+			{
+				Position p = Position(kingPos.getX() + xOffset, kingPos.getY() + yOffset);
+				
+				//Is the tile on the board
+				if(!doesTileExist(p))
+				{
+					deniedPositions.push_back(p);
+				}
+				//If the piece at the tile is friendly, 
+				else if(isTileTeam(p, team))
+				{
+					deniedPositions.push_back(p);
+				}
+				//Check if tiles the king can move to are threatened
+				else if(isTileEmpty(p))
+				{
+					for(std::vector<Position>::iterator it; it != threatenedPositions.end(); it++)
+					{
+						if(*it == p)
+						{
+							deniedPositions.push_back(p);
+							break;
+						}
+					}
+				}
+				//TODO
+				//Else if tile is enemy team, check if the king can kill that piece and move there.
+				//This will probably require either a copy of the board to be made, or changes made and then reverted
+				//since enemy pieces will not move onto another enemy piece.
+			}
+		}
+	}
+	
+	//If all positions around the king are denied, and the king is check, the king is instead put in checkmate
+	if(res == 1  && deniedPositions.size() == 8)
+		res = 2;
 		
-	return false;
+	return res;
 }
 
 //Find all threatened positions for a team.

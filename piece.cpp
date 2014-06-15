@@ -138,6 +138,7 @@ std::vector<Position> King::getMovableTiles(Position position) const
 			}
 		}
 	}
+	
 	return res;
 }
 

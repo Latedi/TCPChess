@@ -38,7 +38,7 @@ public:
 	bool isTileTeam(Position pos, int team) const;
 	bool gameOver() const;
 	bool movePiece(Position from, Position to, int team);
-	bool isCheck(int team) const;
+	int isCheckOrMate(int team) const;
 };
 
 #endif /* BOARD_H */
