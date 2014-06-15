@@ -12,15 +12,32 @@ Position::Position(int x, int y)
 	positionY = y;
 }
 
-const bool Position::operator==(const Position& other)
+bool Position::operator==(const Position& other) const
 {
 	if(positionX == other.positionX && positionY == other.positionY)
 		return true;
 	return false;
 }
 
+bool Position::operator<(const Position& other) const
+{
+	if(positionX < other.positionX)
+		return true;
+	else if(positionX > other.positionX)
+		return false;
+	else
+	{
+		if(positionY < other.positionY)
+			return true;
+		else if(positionY > other.positionY)
+			return false;
+	}
+	
+	return false;
+}
+
 //If we should need to print a position. Probably for debugging.
-const std::string Position::toString()
+std::string Position::toString() const
 {
 	std::string res = "(";
 	std::stringstream s;

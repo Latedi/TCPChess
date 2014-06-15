@@ -79,6 +79,8 @@ void Board::initialize()
 	Queen *whiteQueen = new Queen(WHITE);
 	tiles[0][3] = blackQueen;
 	tiles[B_SIZE-1][3] = whiteQueen;
+	
+	getThreatenedPositions(BLACK);
 }
 
 //Print all tiles a piece can move to. Used for debug purposes.
@@ -409,13 +411,9 @@ bool Board::movePiece(Position from, Position to, int team)
 					}
 					addPiece(piece, to, from);
 					
-					//Special rules for pawns, kings and rooks
-					char type = piece->getRepresentation();
-					if(type == 'P' || type == 'K' || type == 'R')
-					{
-						if(!piece->hasMoved())
-							piece->setMoved(true);
-					}
+					//Mark pieces which has moved
+					if(!piece->hasMoved())
+						piece->setMoved(true);
 					
 					return true;
 				}
@@ -424,4 +422,70 @@ bool Board::movePiece(Position from, Position to, int team)
 	}
 	
 	return false;
+}
+
+//See if a player is checked
+bool Board::isCheck(int team)
+{
+	//Find the king
+	Position kingPos;
+	bool kingFound = false;
+	
+	for(int i = 0; i < B_SIZE; i++)
+	{
+		for(int j = 0; j < B_SIZE; j++)
+		{
+			if(tiles[i][j]->getRepresentation() == 'K' && tiles[i][j]->getTeam() == team)
+			{
+				kingPos = Position(j, i);
+				kingFound = true;
+				break;
+			}
+		}
+		if(kingFound)
+			break;
+	}
+	
+	if(!kingFound)
+		std::cout << "Error: no King found for team " << team << std::endl;
+		
+	//See if the king is threatened and checked
+	std::vector<Position> threatenedPositions = getThreatenedPositions(team);
+	for(std::vector<Position>::iterator it; it != threatenedPositions.end(); it++)
+	{
+		if(*it == kingPos)
+			return true;
+	}
+		
+	return false;
+}
+
+//Find all threatened positions for a team.
+std::vector<Position> Board::getThreatenedPositions(int team)
+{
+	int enemyTeam = WHITE;
+	if(team == WHITE);
+		enemyTeam = BLACK;
+		
+	std::vector<Position> enemyMovable;
+		
+	//Get all tiles the enemy team can move to
+	for(int i = 0; i < B_SIZE; i++)
+	{
+		for(int j = 0; j < B_SIZE; j++)
+		{
+			Position currentPos = Position(j, i);
+			if(!isTileEmpty(currentPos) && tiles[i][j]->getTeam() == enemyTeam)
+			{
+				std::vector<Position> thisMovable = getMovable(currentPos);
+				enemyMovable.insert(enemyMovable.end(), thisMovable.begin(), thisMovable.end());
+			}
+		}
+	}
+	
+	//Remove duplicates
+	std::sort(enemyMovable.begin(), enemyMovable.end());
+	enemyMovable.erase(unique(enemyMovable.begin(), enemyMovable.end()), enemyMovable.end());
+	
+	return enemyMovable;
 }

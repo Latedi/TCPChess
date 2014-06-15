@@ -17,6 +17,7 @@ private:
 	char representation;
 protected:
 	int team;
+	bool moved;
 	void setRepresentation(char representation);
 public:
 	Piece();
@@ -29,18 +30,16 @@ public:
 	const int getTeam();
 	const char getRepresentation();
 	const void printData();
+	const bool hasMoved();
+	void setMoved(bool moved);
 };
 
 class King : public Piece
 {
-private:
-	bool moved;
 public:
 	King(int team);
 	virtual ~King();
 	const virtual std::vector<Position> getMovableTiles(Position position);
-	const bool hasMoved();
-	void setMoved(bool moved);
 };
 
 class Queen : public Piece
@@ -53,26 +52,18 @@ public:
 
 class Pawn : public Piece
 {
-private:
-	bool moved;
 public:
 	Pawn(int team);
 	virtual ~Pawn();
 	const virtual std::vector<Position> getMovableTiles(Position position);
-	const bool hasMoved();
-	void setMoved(bool moved);
 };
 
 class Rook : public Piece
 {
-private:
-	bool moved;
 public:
 	Rook(int team);
 	virtual ~Rook();
 	const virtual std::vector<Position> getMovableTiles(Position position);
-	const bool hasMoved();
-	void setMoved(bool moved);
 };
 
 class Knight : public Piece

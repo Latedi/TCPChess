@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <windows.h>
 
 #include "piece.h"
@@ -25,6 +26,7 @@ private:
 	std::vector<Position> removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition);
 	void addPiece(Piece* piece, Position newPos, Position oldPos);
 	void removePiece(Position position);
+	std::vector<Position> getThreatenedPositions(int team);
 public:
 	Board();
 	~Board();
@@ -36,6 +38,7 @@ public:
 	bool isTileTeam(Position pos, int team);
 	bool gameOver();
 	bool movePiece(Position from, Position to, int team);
+	bool isCheck(int team);
 };
 
 #endif /* BOARD_H */

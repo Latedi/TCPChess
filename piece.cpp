@@ -70,6 +70,16 @@ const char Piece::getRepresentation()
 	return representation;
 }
 
+const bool Piece::hasMoved()
+{
+	return moved;
+}
+
+void Piece::setMoved(bool moved)
+{
+	this->moved = moved;
+}
+
 //Set the character which will be printed to represent the piece
 void Piece::setRepresentation(char representation)
 {
@@ -106,7 +116,6 @@ King::King(int team)
 : Piece(team)
 {
 	setRepresentation('K');
-	moved = false;
 }
 
 King::~King() {}
@@ -130,16 +139,6 @@ const std::vector<Position> King::getMovableTiles(Position position)
 		}
 	}
 	return res;
-}
-
-const bool King::hasMoved()
-{
-	return moved;
-}
-
-void King::setMoved(bool moved)
-{
-	this->moved = moved;
 }
 
 /* QUEEN */
@@ -192,7 +191,6 @@ Pawn::Pawn(int team)
 : Piece(team)
 {
 	setRepresentation('P');
-	moved = false;
 }
 
 Pawn::~Pawn() {}
@@ -219,22 +217,11 @@ const std::vector<Position> Pawn::getMovableTiles(Position position)
 	return res;
 }
 
-const bool Pawn::hasMoved()
-{
-	return moved;
-}
-
-void Pawn::setMoved(bool moved)
-{
-	this->moved = moved;
-}
-
 /* ROOK */
 Rook::Rook(int team)
 : Piece(team)
 {
 	setRepresentation('R');
-	moved = false;
 }
 
 Rook::~Rook() {}
@@ -256,16 +243,6 @@ const std::vector<Position> Rook::getMovableTiles(Position position)
 	}
 	
 	return res;
-}
-
-const bool Rook::hasMoved()
-{
-	return moved;
-}
-
-void Rook::setMoved(bool moved)
-{
-	this->moved = moved;
 }
 
 /* KNIGHT */
