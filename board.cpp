@@ -408,6 +408,15 @@ bool Board::movePiece(Position from, Position to, int team)
 						removePiece(to);
 					}
 					addPiece(piece, to, from);
+					
+					//Special rules for pawns, kings and rooks
+					char type = piece->getRepresentation();
+					if(type == 'P' || type == 'K' || type == 'R')
+					{
+						if(!piece->hasMoved())
+							piece->setMoved(true);
+					}
+					
 					return true;
 				}
 			}
