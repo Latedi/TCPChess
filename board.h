@@ -23,7 +23,7 @@ private:
 	std::vector<Position> removeFriendly(std::vector<Position> positions, int team);
 	std::vector<Position> removeBlockingStraight(std::vector<Position> positions, Position initialPosition);
 	std::vector<Position> removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition);
-	void addPiece(Piece* piece, Position position);
+	void addPiece(Piece* piece, Position newPos, Position oldPos);
 	void removePiece(Position position);
 public:
 	Board();
@@ -35,7 +35,7 @@ public:
 	std::vector<Position> getMovable(Position position);
 	bool isTileTeam(Position pos, int team);
 	bool gameOver();
-	bool movePiece(Position from, Position to);
+	bool movePiece(Position from, Position to, int team);
 };
 
 #endif /* BOARD_H */

@@ -12,9 +12,10 @@ private:
 public:
 	Position();
 	Position(int x, int y);
-	int getX() { return positionX; };
-	int getY() { return positionY; };
-	std::string toString();
+	const int getX() { return positionX; };
+	const int getY() { return positionY; };
+	const bool operator==(const Position& other);
+	const std::string toString();
 };
 
 #endif /* POSITION_H */

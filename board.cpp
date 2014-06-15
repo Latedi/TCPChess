@@ -129,30 +129,23 @@ std::vector<Position> Board::getMovable(Position position)
 {
 	int x = position.getX();
 	int y = position.getY();
-	std::cout << "Position: " << position.toString() << std::endl;
-	tiles[y][x]->printData();
 	std::vector<Position> res;
 	
 	if(doesTileExist(position) && !isTileEmpty(position))
 	{
 		res = tiles[y][x]->getMovableTiles(position);
-		printPositionVector(res);
-		
 		Piece *p = tiles[y][x];
 		
 		if(p->getRepresentation() == 'R' || p->getRepresentation() == 'Q')
 		{
 			res = removeBlockingStraight(res, position);
-			printPositionVector(res);
 		}
 		if(p->getRepresentation() == 'B' || p->getRepresentation() == 'Q')
 		{
 			res = removeBlockingDiagonal(res, position);
-			printPositionVector(res);
 		}
 		
 		res = removeFriendly(res, p->getTeam());
-		printPositionVector(res);
 	}
 	
 	return res;
@@ -369,40 +362,28 @@ int Board::getB_SIZE()
 	return B_SIZE;
 }
 
-//add a piece to position. Will remove any existing piece at that location.
-void Board::addPiece(Piece* piece, Position position)
+//Add a piece to position
+void Board::addPiece(Piece* piece, Position newPos, Position oldPos)
 {
-	if(!isTileEmpty(position))
-	{
-		removePiece(position);
-	}
-	tiles[position.getY()][position.getX()] = piece;
-	std::cout << "Team " << piece->getTeam() << "'s " << piece->getRepresentation() << " now at " << 
-		position.getX() << " " << position.getY() << "\n";
+	tiles[newPos.getY()][newPos.getX()] = piece;
+	tiles[oldPos.getY()][oldPos.getX()] = NULL;
+		
 	return;
 }
 
-//if there is a piece at the given position, then that piece is removed
+//If there is a piece at the given position, then that piece is removed
 void Board::removePiece(Position position)
 {
-	if(tiles[position.getY()][position.getX()] != NULL)
-	{
-		std::cout << "Team " << tiles[position.getX()][position.getY()]->getTeam() << "'s " << 
-			tiles[position.getY()][position.getX()]->getRepresentation() << 
-			" removed from " << position.getX() << " " << position.getY() << "\n";
-		tiles[position.getY()][position.getX()] = NULL;
-	}
-	else
-	{
-		std::cout << "Nothing to remove at this position\n";
-	}
+	delete tiles[position.getY()][position.getX()];
+	
 	return;
 }
 
-//moves a piece from one location to another
-bool Board::movePiece(Position from, Position to)
+//Moves a piece from one location to another
+bool Board::movePiece(Position from, Position to, int team)
 {
 	Piece* piece = tiles[from.getY()][from.getX()];
+	
 	if(piece == NULL)
 	{
 		std::cout << "Cannot move because there is nothing at this location.";
@@ -410,9 +391,28 @@ bool Board::movePiece(Position from, Position to)
 	}
 	else
 	{
-		//need to add checks to make sure move is valid first
-		removePiece(from);
-		addPiece(piece, to);
+		//Check if the tiles exist and if the player owns the piece
+		if(doesTileExist(from) && doesTileExist(to) && !isTileEmpty(from) && isTileTeam(from, piece->getTeam()))
+		{
+			std::vector<Position> movable = getMovable(from);
+			
+			//Make sure that the piece can actually move to that tile
+			for(std::vector<Position>::iterator it = movable.begin(); it != movable.end(); it++)
+			{
+				if(*it == to)
+				{
+					//Move the piece and remove pieces from the destination tile
+					if(!isTileEmpty(to) && !isTileTeam(to, piece->getTeam()))
+					{
+						std::cout << "Removing\n";
+						removePiece(to);
+					}
+					addPiece(piece, to, from);
+					return true;
+				}
+			}
+		}
 	}
-	return true;
+	
+	return false;
 }

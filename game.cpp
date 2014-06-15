@@ -111,16 +111,10 @@ bool Game::parse(std::string &input, int team)
 //Try to move a piece from one tile to another
 bool Game::executeMove(std::string p1, std::string p2, int team)
 {
-	Position origin = stringToPosition(p1);
-	Position destination = stringToPosition(p2);
+	Position from = stringToPosition(p1);
+	Position to = stringToPosition(p2);
 	
-	if(board->isTileTeam(origin, team))
-	{
-		std::vector<Position> movable = board->getMovable(origin);
-		board->printPositionVector(movable);
-	}
-	
-	return true;
+	return board->movePiece(from, to, team);
 }
 
 //Change player who gets to input commands
@@ -158,6 +152,5 @@ Position Game::stringToPosition(std::string word)
 	//reverse the y co-ordinate because the array is stored in reverse order to the way the board is labelled
 	y = B_SIZE - y - 1;
 	Position position(x, y);
-	std::cout << word << " = Position: " << position.toString() << std::endl;
 	return position;
 }
