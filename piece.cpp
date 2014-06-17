@@ -9,6 +9,7 @@ Piece::Piece(int team)
 {
 	this->team = team;
 	setRepresentation('-');
+	moved = false;
 }
 
 Piece::~Piece() {}
@@ -105,10 +106,12 @@ bool Piece::doesTileExist(Position position) const
 	return true;
 }
 
+//Debug
 void Piece::printData() const
 {
 	std::cout << "Representation: " << representation << std::endl;
 	std::cout << "Team: " << team << std::endl;
+	std::cout << "Has moved: " << moved << std::endl;
 }
 
 //Remove all occurances of pieces from a team from a list of positions.
@@ -363,19 +366,32 @@ std::vector<Position> Pawn::getMovableTiles(Position position, const Board *boar
 	int y = position.getY();;
 	std::vector<Position> res;
 	
+	//Which direction is the pawn walking in?
+	int direction;
 	if(team == BLACK)
-	{
-		res.push_back(Position(x, y+1));
-		if(moved == false)
-			res.push_back(Position(x, y+2));
-	}
+		direction = 1;
 	else if(team == WHITE)
-	{
-		res.push_back(Position(x, y-1));
-		if(moved == false)
-			res.push_back(Position(x, y-2));
+		direction = -1;
+	
+	//Check the tiles in front of the pawn. Add another tile forward on the first move
+	Position p1 = Position(x, y + (1 * direction));
+	if(board->doesTileExist(p1) && board->isTileEmpty(p1))
+		res.push_back(p1);
+	if(moved == false) {
+		Position p2 = Position(x, y + (2 * direction));
+		if(board->doesTileExist(p1) && board->isTileEmpty(p1))
+			res.push_back(p2);
 	}
 	
+	//Add tiles which a pawn can attack
+	for(int i = -1; i <= 1; i += 2)
+	{
+		Position attack = Position(x + i, y + (1 * direction));
+		if(!board->isTileEmpty(attack) && !board->isTileTeam(attack, team)) {
+			res.push_back(attack);
+		}
+	}
+
 	res = removeFriendly(res, team, board);
 	
 	return res;

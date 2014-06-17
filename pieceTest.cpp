@@ -10,15 +10,24 @@ Position stringToPosition(std::string word)
 
 	y = B_SIZE - y - 1;
 	Position position(x, y);
+	
 	return position;
 }
 
-bool executeMove(std::string p1, std::string p2, int team, Board *board)
+void executeMove(std::string p1, std::string p2, int team, Board *board)
 {
 	Position from = stringToPosition(p1);
 	Position to = stringToPosition(p2);
 	
-	return board->movePiece(from, to, team);
+	bool res = board->movePiece(from, to, team);
+	
+	if(!res) {
+		std::cout << "Failed to move from " << p1 << " to " << p2 << ". Existing\n";
+		board->renderBoard();
+		exit(-1);
+	}
+	
+	return;
 }
 
 void generalTest(Board *board)
@@ -74,7 +83,7 @@ void pawnTest(Board *board)
 	executeMove("a6", "b5", BLACK, board);
 	executeMove("c4", "b5", WHITE, board);
 	executeMove("c6", "b5", BLACK, board);
-	executeMove("f4", "d5", WHITE, board);
+	executeMove("e4", "d5", WHITE, board);
 	executeMove("f5", "g4", BLACK, board);
 	executeMove("d5", "e6", WHITE, board);
 	executeMove("g4", "f3", BLACK, board);

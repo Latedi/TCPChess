@@ -27,6 +27,7 @@ private:
 	void addPiece(Piece* piece, Position newPos, Position oldPos);
 	void removePiece(Position position);
 	std::vector<Position> getThreatenedPositions(int team) const;
+	void pawnToQueen(Position position);
 public:
 	Board();
 	~Board();

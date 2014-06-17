@@ -20,7 +20,7 @@ Board::~Board()
 
 //Place all the pieces on the board
 void Board::initialize()
-{	
+{
 	for(int i = 0; i < B_SIZE; i++)
 	{
 		for(int j = 0; j < B_SIZE; j++)
@@ -236,7 +236,7 @@ bool Board::movePiece(Position from, Position to, int team)
 	
 	if(piece == NULL)
 	{
-		std::cout << "Cannot move because there is nothing at this location.";
+		std::cout << "Cannot move because there is nothing at this location\n";
 		return false;
 	}
 	else
@@ -254,10 +254,13 @@ bool Board::movePiece(Position from, Position to, int team)
 					//Move the piece and remove pieces from the destination tile
 					if(!isTileEmpty(to) && !isTileTeam(to, piece->getTeam()))
 					{
-						std::cout << "Removing\n";
 						removePiece(to);
 					}
 					addPiece(piece, to, from);
+					
+					//Try to exchange pawns for queens if possible
+					if(piece->getRepresentation() == 'P')
+						pawnToQueen(to);
 					
 					//Mark pieces which has moved
 					if(!piece->hasMoved())
@@ -270,6 +273,24 @@ bool Board::movePiece(Position from, Position to, int team)
 	}
 	
 	return false;
+}
+
+//Exchange a pawn for a queen if it has reached the other side of the board
+void Board::pawnToQueen(Position position)
+{
+	if(doesTileExist(position) && !isTileEmpty(position))
+	{
+		int team = tiles[position.getY()][position.getX()]->getTeam();
+		
+		if((team == WHITE && position.getY() == 0) || (team == BLACK && position.getY() == B_SIZE - 1))
+		{
+			removePiece(position);
+			Queen *newQueen = new Queen(team);
+			tiles[position.getY()][position.getX()] = newQueen;
+		}
+	}
+	
+	return;
 }
 
 //See if a player is checked.
