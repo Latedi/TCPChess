@@ -87,7 +87,7 @@ void Piece::setRepresentation(char representation)
 }
 
 // function implemented individually for every piece
-std::vector<Position> Piece::getMovableTiles(Position position) const
+std::vector<Position> Piece::getMovableTiles(Position position, const Board *board) const
 {
 	std::cout << "Something went wrong. Piece getMovableTiles called\n";
 	std::vector<Position> p;
@@ -111,6 +111,161 @@ void Piece::printData() const
 	std::cout << "Team: " << team << std::endl;
 }
 
+//Remove all occurances of pieces from a team from a list of positions.
+std::vector<Position> Piece::removeFriendly(std::vector<Position> positions, int team, const Board *board) const
+{
+	std::vector<Position>::iterator it = positions.begin();
+	while(it != positions.end())
+	{
+		if(!board->isTileEmpty(*it))
+		{
+			if(board->getPiece(*it)->getTeam() == team)
+			{
+				positions.erase(it);
+			}
+			else {
+				it++;
+			}
+		}
+		else
+			it++;
+	}
+	
+	return positions;
+}
+
+//Remove positions from the positions array which are blocked by other pieces from the position initialPosition. Straight
+std::vector<Position> Piece::removeBlockingStraight(std::vector<Position> positions, Position initialPosition, const Board *board) const
+{
+	int iX = initialPosition.getX();
+	int iY = initialPosition.getY();
+
+	Position up = Position(0, -1);
+	Position down = Position(0, B_SIZE);
+	Position left = Position(-1, 0);
+	Position right = Position(B_SIZE, 0);
+	
+	//Find the closest positions horizontally and vertically which are occupied by any piece
+	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
+	{
+		if(!board->isTileEmpty(*it))
+		{
+			int nX = it->getX();
+			int nY = it->getY();
+			
+			if(nX == iX)
+			{
+				if(nY > iY && nY < up.getY())
+					up = Position(iX, nY);
+				if(nY < iY && nY > down.getY())
+					down = Position(iX, nY);
+			}
+			else if(nY == iY)
+			{
+				if(nX > iX && nX < right.getX())
+					right = Position(nX, iY);
+				if(nX < iX && nX > left.getX())
+					left = Position(nX, iY);
+			}
+		}
+	}
+	
+	//Then delete all tiles that are further away from the vector
+	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
+	{
+		int nX = it->getX();
+		int nY = it->getY();
+		
+		if(nX == iX && (nY < up.getY() || nY > down.getY()))
+		{
+			positions.erase(it);
+			it--;
+		}
+		else if(nY == iY && (nX > right.getX() || nX < left.getX()))
+		{
+			positions.erase(it);
+			it--;
+		}
+	}
+	
+	return positions;
+}
+
+//Remove positions from the positions array which are block by other pieces from the position initialPosition. Diagonally
+std::vector<Position> Piece::removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition, const Board *board) const
+{
+	int iX = initialPosition.getX();
+	int iY = initialPosition.getY();
+
+	Position upLeft = Position(-1, -1);
+	Position upRight = Position(B_SIZE, -1);
+	Position downLeft = Position(-1, B_SIZE);
+	Position downRight = Position(B_SIZE, B_SIZE);
+	
+	//Find the closest pieces diagonally
+	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
+	{		
+		if(!board->isTileEmpty(*it))
+		{
+			int nX = it->getX();
+			int nY = it->getY();
+			
+			int distanceX = nX - iX;
+			if(distanceX < 0)
+				distanceX *= -1;
+			int distanceY = nY - iY;
+			if(distanceY < 0)
+				distanceY *= -1;
+				
+			//Piece is diagonal to the initialPosition
+			if(distanceX == distanceY)
+			{
+				if(nX > iX && nY > iY && nX < downRight.getX() && nY < downRight.getY())
+					downRight = Position(nX, nY);
+				else if(nX > iX && nY < iY && nX < upRight.getX() && nY > upRight.getY())
+					upRight = Position(nX, nY);
+				else if(nX < iX && nY > iY && nX > downLeft.getX() && nY < downLeft.getY())
+					downLeft = Position(nX, nY);
+				else if(nX < iX && nY < iY && nX > upLeft.getX() && nY > upLeft.getY())
+					upLeft = Position(nX, nY);
+			}
+		}
+	}
+	
+	//Delete all pieces further away
+	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
+	{
+		int nX = it->getX();
+		int nY = it->getY();
+		bool erase = false;
+		
+		if(nX > downRight.getX() && nY > downRight.getY())
+		{
+			erase = true;
+		}
+		else if(nX > upRight.getX() && nY < upRight.getY())
+		{
+			erase = true;
+		}
+		else if(nX < downLeft.getX() && nY > downLeft.getY())
+		{
+			erase = true;
+		}
+		else if(nX < upLeft.getX() && nY < upLeft.getY())
+		{
+			erase = true;
+		}
+		
+		if(erase)
+		{
+			positions.erase(it);
+			it--;
+		}
+	}
+	
+	return positions;
+}
+
 /* KING */
 King::King(int team)
 : Piece(team)
@@ -120,7 +275,7 @@ King::King(int team)
 
 King::~King() {}
 
-std::vector<Position> King::getMovableTiles(Position position) const
+std::vector<Position> King::getMovableTiles(Position position, const Board *board) const
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -139,6 +294,8 @@ std::vector<Position> King::getMovableTiles(Position position) const
 		}
 	}
 	
+	res = removeFriendly(res, team, board);
+	
 	return res;
 }
 
@@ -151,7 +308,7 @@ Queen::Queen(int team)
 
 Queen::~Queen() {}
 
-std::vector<Position> Queen::getMovableTiles(Position position) const
+std::vector<Position> Queen::getMovableTiles(Position position, const Board *board) const
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -184,6 +341,10 @@ std::vector<Position> Queen::getMovableTiles(Position position) const
 			res.push_back(p4);
 	}
 	
+	res = removeBlockingStraight(res, position, board);
+	res = removeBlockingDiagonal(res, position, board);
+	res = removeFriendly(res, team, board);
+	
 	return res;
 }
 
@@ -196,7 +357,7 @@ Pawn::Pawn(int team)
 
 Pawn::~Pawn() {}
 
-std::vector<Position> Pawn::getMovableTiles(Position position) const
+std::vector<Position> Pawn::getMovableTiles(Position position, const Board *board) const
 {
 	int x = position.getX();
 	int y = position.getY();;
@@ -215,6 +376,8 @@ std::vector<Position> Pawn::getMovableTiles(Position position) const
 			res.push_back(Position(x, y-2));
 	}
 	
+	res = removeFriendly(res, team, board);
+	
 	return res;
 }
 
@@ -227,7 +390,7 @@ Rook::Rook(int team)
 
 Rook::~Rook() {}
 
-std::vector<Position> Rook::getMovableTiles(Position position) const
+std::vector<Position> Rook::getMovableTiles(Position position, const Board *board) const
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -243,6 +406,9 @@ std::vector<Position> Rook::getMovableTiles(Position position) const
 			res.push_back(pos2);
 	}
 	
+	res = removeBlockingStraight(res, position, board);
+	res = removeFriendly(res, team, board);
+	
 	return res;
 }
 
@@ -255,7 +421,7 @@ Knight::Knight(int team)
 
 Knight::~Knight() {}
 
-std::vector<Position> Knight::getMovableTiles(Position position) const
+std::vector<Position> Knight::getMovableTiles(Position position, const Board *board) const
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -278,6 +444,8 @@ std::vector<Position> Knight::getMovableTiles(Position position) const
 			res.push_back(Position(x+i,y-j));
 	}
 	
+	res = removeFriendly(res, team, board);
+	
 	return res;
 }
 
@@ -290,7 +458,7 @@ Bishop::Bishop(int team)
 
 Bishop::~Bishop() {}
 
-std::vector<Position> Bishop::getMovableTiles(Position position) const
+std::vector<Position> Bishop::getMovableTiles(Position position, const Board *board) const
 {
 	std::vector<Position> res;
 	int x = position.getX();
@@ -312,6 +480,9 @@ std::vector<Position> Bishop::getMovableTiles(Position position) const
 		if(doesTileExist(p4))
 			res.push_back(p4);
 	}
+	
+	res = removeBlockingDiagonal(res, position, board);
+	res = removeFriendly(res, team, board);
 	
 	return res;
 }

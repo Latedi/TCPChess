@@ -133,8 +133,8 @@ std::vector<Position> Board::getMovable(Position position) const
 	
 	if(doesTileExist(position) && !isTileEmpty(position))
 	{
-		res = tiles[y][x]->getMovableTiles(position);
-		Piece *p = tiles[y][x];
+		res = tiles[y][x]->getMovableTiles(position, this);
+		/*Piece *p = tiles[y][x];
 		
 		if(p->getRepresentation() == 'R' || p->getRepresentation() == 'Q')
 		{
@@ -145,165 +145,10 @@ std::vector<Position> Board::getMovable(Position position) const
 			res = removeBlockingDiagonal(res, position);
 		}
 		
-		res = removeFriendly(res, p->getTeam());
+		res = removeFriendly(res, p->getTeam());*/
 	}
 	
 	return res;
-}
-
-//Remove all occurances of pieces from a team from a list of positions.
-std::vector<Position> Board::removeFriendly(std::vector<Position> positions, int team) const
-{
-	std::vector<Position>::iterator it = positions.begin();
-	while(it != positions.end())
-	{
-		if(!isTileEmpty(*it))
-		{
-			if(tiles[it->getY()][it->getX()]->getTeam() == team)
-			{
-				positions.erase(it);
-			}
-			else {
-				it++;
-			}
-		}
-		else
-			it++;
-	}
-	
-	return positions;
-}
-
-//Remove positions from the positions array which are block by other pieces from the position initialPosition. Straight
-std::vector<Position> Board::removeBlockingStraight(std::vector<Position> positions, Position initialPosition) const
-{
-	int iX = initialPosition.getX();
-	int iY = initialPosition.getY();
-
-	Position up = Position(0, -1);
-	Position down = Position(0, B_SIZE);
-	Position left = Position(-1, 0);
-	Position right = Position(B_SIZE, 0);
-	
-	//Find the closest positions horizontally and vertically which are occupied by any piece
-	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
-	{
-		if(!isTileEmpty(*it))
-		{
-			int nX = it->getX();
-			int nY = it->getY();
-			
-			if(nX == iX)
-			{
-				if(nY > iY && nY < up.getY())
-					up = Position(iX, nY);
-				if(nY < iY && nY > down.getY())
-					down = Position(iX, nY);
-			}
-			else if(nY == iY)
-			{
-				if(nX > iX && nX < right.getX())
-					right = Position(nX, iY);
-				if(nX < iX && nX > left.getX())
-					left = Position(nX, iY);
-			}
-		}
-	}
-	
-	//Then delete all tiles that are further away from the vector
-	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
-	{
-		int nX = it->getX();
-		int nY = it->getY();
-		
-		if(nX == iX && (nY < up.getY() || nY > down.getY()))
-		{
-			positions.erase(it);
-			it--;
-		}
-		else if(nY == iY && (nX > right.getX() || nX < left.getX()))
-		{
-			positions.erase(it);
-			it--;
-		}
-	}
-	
-	return positions;
-}
-
-//Remove positions from the positions array which are block by other pieces from the position initialPosition. Diagonally
-std::vector<Position> Board::removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition) const
-{
-	int iX = initialPosition.getX();
-	int iY = initialPosition.getY();
-
-	Position upLeft = Position(-1, -1);
-	Position upRight = Position(B_SIZE, -1);
-	Position downLeft = Position(-1, B_SIZE);
-	Position downRight = Position(B_SIZE, B_SIZE);
-	
-	//Find the closest pieces diagonally
-	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
-	{		
-		if(!isTileEmpty(*it))
-		{
-			int nX = it->getX();
-			int nY = it->getY();
-			
-			int distanceX = nX - iX;
-			if(distanceX < 0)
-				distanceX *= -1;
-			int distanceY = nY - iY;
-			if(distanceY < 0)
-				distanceY *= -1;
-				
-			//Piece is diagonal to the initialPosition
-			if(distanceX == distanceY)
-			{
-				if(nX > iX && nY > iY && nX < downRight.getX() && nY < downRight.getY())
-					downRight = Position(nX, nY);
-				else if(nX > iX && nY < iY && nX < upRight.getX() && nY > upRight.getY())
-					upRight = Position(nX, nY);
-				else if(nX < iX && nY > iY && nX > downLeft.getX() && nY < downLeft.getY())
-					downLeft = Position(nX, nY);
-				else if(nX < iX && nY < iY && nX > upLeft.getX() && nY > upLeft.getY())
-					upLeft = Position(nX, nY);
-			}
-		}
-	}
-	
-	//Delete all pieces further away
-	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
-	{
-		int nX = it->getX();
-		int nY = it->getY();
-		bool erase = false;
-		
-		if(nX > downRight.getX() && nY > downRight.getY())
-		{
-			erase = true;
-		}
-		else if(nX > upRight.getX() && nY < upRight.getY())
-		{
-			erase = true;
-		}
-		else if(nX < downLeft.getX() && nY > downLeft.getY())
-		{
-			erase = true;
-		}
-		else if(nX < upLeft.getX() && nY < upLeft.getY())
-		{
-			erase = true;
-		}
-		
-		if(erase)
-		{
-			positions.erase(it);
-			it--;
-		}
-	}
-	
-	return positions;
 }
 
 //Helpful when debugging
@@ -355,6 +200,11 @@ void Board::resetConsoleColor() const
 	HANDLE hConsole;
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+}
+
+Piece* Board::getPiece(Position position) const
+{
+	return tiles[position.getY()][position.getX()];
 }
 
 int Board::getB_SIZE() const

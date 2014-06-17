@@ -13,14 +13,14 @@
 #define B_SIZE 8
 #endif
 
+class Piece;
+
 class Board
 {
 private:
 	Piece * tiles[B_SIZE][B_SIZE];
 	void initialize();
 	void resetConsoleColor() const;
-	bool isTileEmpty(Position position) const;
-	bool doesTileExist(Position position) const;
 	std::vector<Position> removeFriendly(std::vector<Position> positions, int team) const;
 	std::vector<Position> removeBlockingStraight(std::vector<Position> positions, Position initialPosition) const;
 	std::vector<Position> removeBlockingDiagonal(std::vector<Position> positions, Position initialPosition) const;
@@ -39,6 +39,9 @@ public:
 	bool gameOver() const;
 	bool movePiece(Position from, Position to, int team);
 	int isCheckOrMate(int team) const;
+	bool isTileEmpty(Position position) const;
+	bool doesTileExist(Position position) const;
+	Piece* getPiece(Position position) const;
 };
 
 #endif /* BOARD_H */
