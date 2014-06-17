@@ -1,0 +1,3 @@
+Pawn test:
+http://www.apronus.com/chess/wbeditor.php?m=a4_a6_b3_b5_c4_c6_d3_d5_e4_e6_f3_f5_g4_g6_h3_h5_axb5_axb5_cxb5_cxb5_exd5_fxg4_dxe6_gxf3_e7_Kd7_e8ZQ*_Kc7_Be2_f2*_Kd2_f1ZQ
+

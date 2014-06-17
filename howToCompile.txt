@@ -1,2 +1,6 @@
 Install mingw
 gcc main.cpp board.cpp game.cpp piece.cpp position.cpp -o TCPChess.exe -Wall -lstdc++
+
+
+tests:
+gcc board.cpp piece.cpp position.cpp pieceTest.cpp -o PieceTest.exe -Wall -lstdc++
