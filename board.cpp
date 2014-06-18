@@ -168,11 +168,11 @@ void Board::printPositionVector(std::vector<Position> positions) const
 //Print the entire board. Pieces are responsible for printing themselves
 void Board::renderBoard() const
 {
+	resetConsoleColor();
 	std::cout << " abcdefgh" << std::endl;
 	
 	for(int i = 0; i < B_SIZE; i++)
 	{
-		resetConsoleColor();
 		std::cout << B_SIZE - i;
 		
 		for(int j = 0; j < B_SIZE; j++)
@@ -188,6 +188,7 @@ void Board::renderBoard() const
 			}
 		}
 		
+		resetConsoleColor();
 		std::cout << std::endl;
 	}
 	
