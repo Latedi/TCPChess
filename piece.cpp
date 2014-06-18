@@ -327,7 +327,7 @@ std::vector<Position> Queen::getMovableTiles(Position position, const Board *boa
 			res.push_back(pos2);
 	}
 	
-	for(int offset = 1; offset < B_SIZE - 1; offset++)
+	for(int offset = 1; offset < B_SIZE; offset++)
 	{
 		Position p1, p2, p3, p4;
 		p1 = Position(x + offset, y + offset);
@@ -480,7 +480,7 @@ std::vector<Position> Bishop::getMovableTiles(Position position, const Board *bo
 	int x = position.getX();
 	int y = position.getY();
 	
-	for(int offset = 1; offset < B_SIZE - 1; offset++)
+	for(int offset = 1; offset < B_SIZE; offset++)
 	{
 		Position p1, p2, p3, p4;
 		p1 = Position(x + offset, y + offset);
