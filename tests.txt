@@ -18,3 +18,6 @@ http://www.apronus.com/chess/wbeditor.php?m=e3_e5_Ke2_Ke7_Kd3_Kd6_Kc4_b5*_Kxb5_N
 
 Castling:
 http://www.apronus.com/chess/wbeditor.php?m=b3_e5_d3_Bd6_Nc3_Nh6_Qd2_O-O_Ba3_f6_O-O-O_Kf7_h3_Ke8_h4_Rh8_h5
+
+Checkmate test (white player checked three times (including the checkmate) and then checkmated):
+http://www.apronus.com/chess/wbeditor.php?m=e3_d6_Ke2_c5_Kd3_Qb6_c3_Nf6_Qc2_h5_Be2_c4*_Kxc4_Qa5_Kd3_b6_h3_Qa4_h4_Ba6*_c4_g6_Qd1_Qxc4M

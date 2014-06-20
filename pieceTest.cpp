@@ -44,6 +44,40 @@ void executeMove(std::string p1, std::string p2, int team, Board *board, bool ex
 	return;
 }
 
+//Test checkmate
+void checkmateTest(Board *board)
+{
+	executeMove("e2", "e3", WHITE, board);
+	executeMove("d7", "d6", BLACK, board);
+	executeMove("e1", "e2", WHITE, board);
+	executeMove("c7", "c5", BLACK, board);
+	executeMove("e2", "d3", WHITE, board);
+	executeMove("d8", "b6", BLACK, board);
+	executeMove("c2", "c3", WHITE, board);
+	executeMove("g8", "f6", BLACK, board);
+	executeMove("d1", "c2", WHITE, board);
+	executeMove("h7", "h5", BLACK, board);
+	executeMove("f1", "e2", WHITE, board);
+	executeMove("c5", "c4", BLACK, board);
+	executeMove("d3", "d4", WHITE, board, false);
+	executeMove("d3", "e4", WHITE, board, false);
+	executeMove("e2", "h5", WHITE, board, false);
+	executeMove("c2", "b3", WHITE, board, false);
+	executeMove("h2", "h3", WHITE, board, false);
+	executeMove("d3", "c4", WHITE, board);
+	executeMove("b6", "a5", BLACK, board);
+	executeMove("c4", "d3", WHITE, board);
+	executeMove("b7", "b6", BLACK, board);
+	executeMove("h2", "h3", WHITE, board);
+	executeMove("a5", "a4", BLACK, board);
+	executeMove("h3", "h4", WHITE, board);
+	executeMove("c8", "a6", BLACK, board);
+	executeMove("c3", "c4", WHITE, board);
+	executeMove("g7", "g6", BLACK, board);
+	executeMove("c2", "d1", WHITE, board);
+	executeMove("a4", "c4", BLACK, board);
+}
+
 //Test castling
 void castleTest(Board *board)
 {
@@ -309,6 +343,12 @@ int main(int argc, char* argv[])
 	std::cout << "\nTesting Castling:\n";
 	board = new Board();
 	castleTest(board);
+	board->renderBoard();
+	delete board;
+	
+	std::cout << "\nTesting Checkmate:\n";
+	board = new Board();
+	checkmateTest(board);
 	board->renderBoard();
 	delete board;
 	

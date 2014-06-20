@@ -41,6 +41,7 @@ public:
 	bool gameOver() const;
 	bool movePiece(Position from, Position to, int team);
 	bool isCheck(int team, bool printDebug=false) const;
+	bool isChekmate(int team);
 	bool isTileEmpty(Position position) const;
 	bool doesTileExist(Position position) const;
 	Piece* getPiece(Position position) const;

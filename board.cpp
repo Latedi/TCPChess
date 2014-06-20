@@ -287,17 +287,7 @@ bool Board::movePiece(Position from, Position to, int team)
 					//Try to exchange pawns for queens if possible
 					if(piece->getRepresentation() == 'P')
 					{
-						//If the transformation is successful, we need to see if the opponent is checked
-						//so that we can alert them.
-						bool res = pawnToQueen(to);
-						if(res)
-						{
-							/*bool opponentChecked = isCheck(getEnemyTeam(team));
-							if(opponentChecked)
-							{
-								std::cout << "Player " << getEnemyTeam(team) << " has been checked\n";
-							}*/
-						}
+						pawnToQueen(to);
 					}
 						
 					//If the player is not checked after the move, complete the move. Otherwise reverse it and return false.
@@ -314,6 +304,7 @@ bool Board::movePiece(Position from, Position to, int team)
 							delete p;
 					}
 					
+					//Alert the opponent if the move checked their king
 					bool opponentChecked = isCheck(getEnemyTeam(team));
 					if(opponentChecked)
 					{
@@ -323,6 +314,10 @@ bool Board::movePiece(Position from, Position to, int team)
 					//Mark pieces which has moved. Used for castelling and pawns moving two steps.
 					if(!piece->hasMoved())
 						piece->setMoved(true);
+						
+					//And finally, if we checkmated the opponent lets print something
+					if(isChekmate(getEnemyTeam(team)))
+						std::cout << "Player " << getEnemyTeam(team) << " is checkmate\n";
 					
 					return true;
 				}
@@ -345,7 +340,6 @@ bool Board::castle(int team, bool kingside)
 	//The king cannot castle while checked
 	if(isCheck(team))
 	{
-		std::cout << "King is already checked\n";
 		return false;
 	}
 	
@@ -375,7 +369,6 @@ bool Board::castle(int team, bool kingside)
 	{
 		if(*it == Position(kingPos.getX() + xDirection, yOffset) || *it == Position(kingPos.getX() + xDirection * 2, yOffset))
 		{
-			std::cout << "King checked upon arriving or on the way\n";
 			return false;
 		}
 	}
@@ -474,56 +467,57 @@ bool Board::isCheck(int team, bool printDebug) const
 		renderHighlightedPosiotions(threatenedPositions);
 		
 	}
-	
-	//THIS AINT GONNA WORK :V
-	
-	//If all tiles near the king is either friendly or threatened the king is checkmate
-	//This will be problematic as we also need to check what pieces the king can kill to stay safe.
-	//Will add that... some other time.
-	/*std::vector<Position> deniedPositions;
-	for(int xOffset = -1; xOffset <= 1; xOffset++)
+		
+	return false;
+}
+
+//See if a player is checkmate.
+//We're just going to bruteforce this one.
+bool Board::isChekmate(int team)
+{
+	//The king has to be checked to be checkmate. This also assures us that all
+	//the calculations won't be run too often.
+	if(isCheck(team))
 	{
-		for(int yOffset = -1; yOffset <= 1; yOffset++)
+		for(int i = 0; i < B_SIZE; i++)
 		{
-			if(xOffset != 0 || yOffset != 0)
+			for(int j = 0; j < B_SIZE; j++)
 			{
-				Position p = Position(kingPos.getX() + xOffset, kingPos.getY() + yOffset);
-				
-				//Is the tile on the board
-				if(!doesTileExist(p))
+				//Go through all pieces from the team
+				Position pos = Position(i, j);
+				if(!isTileEmpty(pos) && isTileTeam(pos, team))
 				{
-					deniedPositions.push_back(p);
-				}
-				//If the piece at the tile is friendly, 
-				else if(isTileTeam(p, team))
-				{
-					deniedPositions.push_back(p);
-				}
-				//Check if tiles the king can move to are threatened
-				else if(isTileEmpty(p))
-				{
-					for(std::vector<Position>::iterator it; it != threatenedPositions.end(); it++)
+					std::vector<Position> movable = getMovable(pos);
+					for(std::vector<Position>::iterator it = movable.begin(); it != movable.end(); it++)
 					{
-						if(*it == p)
+						//Test the move and see if the king is still checked. If not, it is not checkmate.
+						Piece *p = NULL;
+						if(!isTileEmpty(*it))
+							p = tiles[it->getY()][it->getX()];
+						tiles[it->getY()][it->getX()] = tiles[pos.getY()][pos.getX()];
+						tiles[pos.getY()][pos.getX()] = NULL;
+						
+						//Still check? Return the pieces either way
+						bool stillCheck = isCheck(team);
+						tiles[pos.getY()][pos.getX()] = tiles[it->getY()][it->getX()];
+						tiles[it->getY()][it->getX()] = p;
+						
+						//So if the player can make a move, it's not checkmate. Otherwise continue bruteforcing everything.
+						if(stillCheck)
 						{
-							deniedPositions.push_back(p);
-							break;
+							continue;
 						}
+						else
+							return false;
 					}
 				}
-				//TODO
-				//Else if tile is enemy team, check if the king can kill that piece and move there.
-				//This will probably require either a copy of the board to be made, or changes made and then reverted
-				//since enemy pieces will not move onto another enemy piece.
 			}
 		}
 	}
+	else
+		return false;
 	
-	//If all positions around the king are denied, and the king is check, the king is instead put in checkmate
-	if(res == 1  && deniedPositions.size() == 8)
-		res = 2;*/
-		
-	return false;
+	return true;
 }
 
 //Find all threatened positions for a team. The team which is sent to this function is not the team
