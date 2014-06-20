@@ -1,4 +1,4 @@
-Pawn test:
+Pawn test (white player checked once, black player checked once):
 http://www.apronus.com/chess/wbeditor.php?m=a4_a6_b3_b5_c4_c6_d3_d5_e4_e6_f3_f5_g4_g6_h3_h5_axb5_axb5_cxb5_cxb5_exd5_fxg4_dxe6_gxf3_e7_Kd7_e8ZQ*_Kc7_Be2_f2*_Kd2_f1ZQ
 
 Knight test:
@@ -12,3 +12,6 @@ http://www.apronus.com/chess/wbeditor.php?m=e4_e5_d4_b6_Bg5_Bc5_Bxd8_Bxd4_Ba6_Bx
 
 Queen test:
 http://www.apronus.com/chess/wbeditor.php?m=e3_e6_Qg4_Qg5_Qb4_Qxg2_Qxb7_Qxg1_Qxb8_Qxh1_Qxa8_g5_b4_g4_b5_g3_b6_g2_b7_g1ZQ_b8ZQ_Qxa8_Qxa8_Qg4_Qxa7_Qa4_Qxa4_c6_Qb5_cxb5
+
+King and check test (white player checked three times):
+http://www.apronus.com/chess/wbeditor.php?m=e3_e5_Ke2_Ke7_Kd3_Kd6_Kc4_b5*_Kxb5_Na6_Kc4_Rb8_Kc3_Bb7_Kb3_Bc6*_Bb5_Bb7_Bf1_Bd5*_Ka3

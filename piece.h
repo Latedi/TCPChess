@@ -5,6 +5,8 @@
 #define BLACK 1
 #define B_SIZE 8
 
+#define HIGHLIGHT 2
+
 #include <vector>
 #include <iostream>
 #include <windows.h>
@@ -62,6 +64,7 @@ public:
 	Pawn(int team);
 	virtual ~Pawn();
 	virtual std::vector<Position> getMovableTiles(Position position, const Board *board) const;
+	std::vector<Position> getAttackableTiles(Position position, const Board *board) const;
 };
 
 class Rook : public Piece

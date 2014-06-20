@@ -55,6 +55,8 @@ void Piece::printEmpty(int bgColor) const
 	case BLACK:
 		bgColor = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
 		break;
+	case HIGHLIGHT:
+		bgColor = BACKGROUND_BLUE | BACKGROUND_INTENSITY;
 	}
 	
 	SetConsoleTextAttribute(hConsole, bgColor);
@@ -140,35 +142,35 @@ std::vector<Position> Piece::removeFriendly(std::vector<Position> positions, int
 //Remove positions from the positions array which are blocked by other pieces from the position initialPosition. Straight
 std::vector<Position> Piece::removeBlockingStraight(std::vector<Position> positions, Position initialPosition, const Board *board) const
 {
-	int iX = initialPosition.getX();
-	int iY = initialPosition.getY();
+	int initX = initialPosition.getX();
+	int initY = initialPosition.getY();
 
-	Position up = Position(0, -1);
-	Position down = Position(0, B_SIZE);
-	Position left = Position(-1, 0);
-	Position right = Position(B_SIZE, 0);
+	Position up = Position(initX, -1);
+	Position down = Position(initX, B_SIZE);
+	Position left = Position(-1, initY);
+	Position right = Position(B_SIZE, initY);
 	
-	//Find the closest positions horizontally and vertically which are occupied by any piece
+	//Find the closest positions horizontally and vertically which are occupied by anewY piece
 	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
 	{
 		if(!board->isTileEmpty(*it))
 		{
-			int nX = it->getX();
-			int nY = it->getY();
+			int newX = it->getX();
+			int newY = it->getY();
 			
-			if(nX == iX)
+			if(newX == initX)
 			{
-				if(nY > iY && nY < up.getY())
-					up = Position(iX, nY);
-				if(nY < iY && nY > down.getY())
-					down = Position(iX, nY);
+				if(newY < initY && newY > up.getY())
+					up = Position(initX, newY);
+				if(newY > initY && newY < down.getY())
+					down = Position(initX, newY);
 			}
-			else if(nY == iY)
+			else if(newY == initY)
 			{
-				if(nX > iX && nX < right.getX())
-					right = Position(nX, iY);
-				if(nX < iX && nX > left.getX())
-					left = Position(nX, iY);
+				if(newX > initX && newX < right.getX())
+					right = Position(newX, initY);
+				if(newX < initX && newX > left.getX())
+					left = Position(newX, initY);
 			}
 		}
 	}
@@ -176,15 +178,15 @@ std::vector<Position> Piece::removeBlockingStraight(std::vector<Position> positi
 	//Then delete all tiles that are further away from the vector
 	for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
 	{
-		int nX = it->getX();
-		int nY = it->getY();
+		int newX = it->getX();
+		int newY = it->getY();
 		
-		if(nX == iX && (nY < up.getY() || nY > down.getY()))
+		if(newX == initX && (newY < up.getY() || newY > down.getY()))
 		{
 			positions.erase(it);
 			it--;
 		}
-		else if(nY == iY && (nX > right.getX() || nX < left.getX()))
+		else if(newY == initY && (newX > right.getX() || newX < left.getX()))
 		{
 			positions.erase(it);
 			it--;
@@ -393,6 +395,31 @@ std::vector<Position> Pawn::getMovableTiles(Position position, const Board *boar
 	}
 
 	res = removeFriendly(res, team, board);
+	
+	return res;
+}
+
+//This is used to calculate check, as pawns cannot move and attack the same positions as all
+//other pieces can.
+std::vector<Position> Pawn::getAttackableTiles(Position position, const Board *board) const
+{
+	int x = position.getX();
+	int y = position.getY();;
+	std::vector<Position> res;
+	
+	int direction;
+	if(team == BLACK)
+		direction = 1;
+	else if(team == WHITE)
+		direction = -1;
+	
+	for(int i = -1; i <= 1; i += 2)
+	{
+		Position attack = Position(x + i, y + (1 * direction));
+		if(!board->isTileEmpty(attack) && !board->isTileTeam(attack, team)) {
+			res.push_back(attack);
+		}
+	}
 	
 	return res;
 }

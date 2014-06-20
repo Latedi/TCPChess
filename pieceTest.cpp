@@ -24,12 +24,45 @@ void executeMove(std::string p1, std::string p2, int team, Board *board, bool ex
 	bool res = board->movePiece(from, to, team);
 	
 	if(res != expectedOutcome) {
-		std::cout << "Failed to move from " << p1 << " to " << p2 << ".\n";
+		std::cout << "Move from " << p1 << " to " << p2 << " did not get expected outcome.\n";
 		board->renderBoard();
 		exit(-1);
 	}
 	
 	return;
+}
+
+//Tests the king and check
+void kingTest(Board *board)
+{
+	executeMove("e2", "e3", WHITE, board);
+	executeMove("e7", "e5", BLACK, board);
+	executeMove("e1", "e2", WHITE, board);
+	executeMove("e8", "e7", BLACK, board);
+	executeMove("e2", "d3", WHITE, board);
+	executeMove("e7", "d6", BLACK, board);
+	executeMove("e2", "d3", WHITE, board, false);
+	executeMove("d3", "c4", WHITE, board);
+	executeMove("d6", "d5", BLACK, board, false);
+	executeMove("b7", "b5", BLACK, board);
+	executeMove("c4", "b5", WHITE, board);
+	executeMove("b8", "a6", BLACK, board);
+	executeMove("b5", "c4", WHITE, board);
+	executeMove("a8", "b8", BLACK, board);
+	executeMove("c4", "c3", WHITE, board);
+	executeMove("c8", "b7", BLACK, board);
+	executeMove("c3", "b3", WHITE, board);
+	executeMove("b7", "c6", BLACK, board);
+	executeMove("b3", "b4", WHITE, board, false);
+	executeMove("f1", "b5", WHITE, board);
+	executeMove("c6", "b7", BLACK, board);
+	executeMove("b5", "f1", WHITE, board);
+	executeMove("b7", "d5", BLACK, board);
+	executeMove("f1", "b5", WHITE, board, false);
+	executeMove("f1", "c4", WHITE, board, false);
+	executeMove("b3", "b4", WHITE, board, false);
+	executeMove("b3", "c4", WHITE, board, false);
+	executeMove("b3", "a3", WHITE, board);
 }
 
 //Also tests pawns which turned into queens
@@ -191,33 +224,39 @@ void pawnTest(Board *board)
 
 int main(int argc, char* argv[])
 {
-	std::cout << "Testing pawns:\n";
+	std::cout << "\nTesting pawns:\n";
 	Board *board = new Board();
 	pawnTest(board);
 	board->renderBoard();
 	delete board;
 	
-	std::cout << "Testing Knights:\n";
+	std::cout << "\nTesting Knights:\n";
 	board = new Board();
 	knightTest(board);
 	board->renderBoard();
 	delete board;
 	
-	std::cout << "Testing Rooks:\n";
+	std::cout << "\nTesting Rooks:\n";
 	board = new Board();
 	rookTest(board);
 	board->renderBoard();
 	delete board;
 	
-	std::cout << "Testing Bishops:\n";
+	std::cout << "\nTesting Bishops:\n";
 	board = new Board();
 	bishopTest(board);
 	board->renderBoard();
 	delete board;
 	
-	std::cout << "Testing Queens:\n";
+	std::cout << "\nTesting Queens:\n";
 	board = new Board();
 	queenTest(board);
+	board->renderBoard();
+	delete board;
+	
+	std::cout << "\nTesting Kings:\n";
+	board = new Board();
+	kingTest(board);
 	board->renderBoard();
 	delete board;
 	

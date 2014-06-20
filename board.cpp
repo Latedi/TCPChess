@@ -81,13 +81,6 @@ void Board::initialize()
 	tiles[B_SIZE-1][3] = whiteQueen;
 }
 
-//Print all tiles a piece can move to. Used for debug purposes.
-void Board::printMovable(Position position) const
-{
-	std::vector<Position> positionVector = getMovable(position);
-	printPositionVector(positionVector);
-}
-
 //See if there is a already a piece on the tile or not.
 bool Board::isTileEmpty(Position position) const
 {
@@ -134,18 +127,6 @@ std::vector<Position> Board::getMovable(Position position) const
 	if(doesTileExist(position) && !isTileEmpty(position))
 	{
 		res = tiles[y][x]->getMovableTiles(position, this);
-		/*Piece *p = tiles[y][x];
-		
-		if(p->getRepresentation() == 'R' || p->getRepresentation() == 'Q')
-		{
-			res = removeBlockingStraight(res, position);
-		}
-		if(p->getRepresentation() == 'B' || p->getRepresentation() == 'Q')
-		{
-			res = removeBlockingDiagonal(res, position);
-		}
-		
-		res = removeFriendly(res, p->getTeam());*/
 	}
 	
 	return res;
@@ -163,6 +144,37 @@ void Board::printPositionVector(std::vector<Position> positions) const
 			std::cout << it->toString() << std::endl;
 		}
 	}
+}
+
+//Render a list of positions visually. Makes it a lot more readable where a piece can move etc.
+void Board::renderHighlightedPosiotions(std::vector<Position> positions) const
+{
+	resetConsoleColor();
+	std::cout << " abcdefgh" << std::endl;
+	
+	for(int i = 0; i < B_SIZE; i++)
+	{
+		std::cout << B_SIZE - i;
+		
+		for(int j = 0; j < B_SIZE; j++)
+		{
+			Position thisPosition = Position(j, i);
+			
+			int bgColor = (i + j) % 2;
+			for(std::vector<Position>::iterator it = positions.begin(); it != positions.end(); it++)
+			{
+				if(*it == thisPosition)
+					bgColor = HIGHLIGHT;
+			}
+			
+			tiles[i][j]->printEmpty(bgColor);
+		}
+		
+		resetConsoleColor();
+		std::cout << std::endl;
+	}
+	
+	resetConsoleColor();
 }
 
 //Print the entire board. Pieces are responsible for printing themselves
@@ -242,10 +254,20 @@ bool Board::movePiece(Position from, Position to, int team)
 	}
 	else
 	{
-		//Check if the tiles exist and if the player owns the piece
+		//Check if the tiles exist and if the player owns the piece on the from Position
 		if(doesTileExist(from) && doesTileExist(to) && !isTileEmpty(from) && isTileTeam(from, piece->getTeam()))
 		{
 			std::vector<Position> movable = getMovable(from);
+			
+			//If the player is checked after having made a move, we will need to reverse the move.
+			//So we save the piece which might exist at the destination tile in a variable instead
+			//of deleting it.
+			bool beforeCheck = isCheck(team);
+			Piece *p;
+			if(!isTileEmpty(to))
+				p = tiles[to.getY()][to.getX()];
+			else
+				p = NULL;
 			
 			//Make sure that the piece can actually move to that tile
 			for(std::vector<Position>::iterator it = movable.begin(); it != movable.end(); it++)
@@ -255,15 +277,49 @@ bool Board::movePiece(Position from, Position to, int team)
 					//Move the piece and remove pieces from the destination tile
 					if(!isTileEmpty(to) && !isTileTeam(to, piece->getTeam()))
 					{
-						removePiece(to);
+						//We will delete the piece later if checked
+						if(!beforeCheck)
+							removePiece(to);
 					}
 					addPiece(piece, to, from);
 					
 					//Try to exchange pawns for queens if possible
 					if(piece->getRepresentation() == 'P')
-						pawnToQueen(to);
+					{
+						//If the transformation is successful, we need to see if the opponent is checked
+						//so that we can alert them.
+						bool res = pawnToQueen(to);
+						if(res)
+						{
+							/*bool opponentChecked = isCheck(getEnemyTeam(team));
+							if(opponentChecked)
+							{
+								std::cout << "Player " << getEnemyTeam(team) << " has been checked\n";
+							}*/
+						}
+					}
+						
+					//If the player is not checked after the move, complete the move. Otherwise reverse it and return false.
+					bool afterCheck = isCheck(team);
+					if(afterCheck)
+					{
+						addPiece(piece, from, to);
+						tiles[to.getY()][to.getX()] = p;
+						return false;
+					}
+					else
+					{
+						if(!isTileEmpty(to) && !isTileTeam(to, piece->getTeam()))
+							delete p;
+					}
 					
-					//Mark pieces which has moved
+					bool opponentChecked = isCheck(getEnemyTeam(team));
+					if(opponentChecked)
+					{
+						std::cout << "Player " << getEnemyTeam(team) << " has been checked\n";
+					}
+					
+					//Mark pieces which has moved. Used for castelling and pawns moving two steps.
 					if(!piece->hasMoved())
 						piece->setMoved(true);
 					
@@ -277,7 +333,8 @@ bool Board::movePiece(Position from, Position to, int team)
 }
 
 //Exchange a pawn for a queen if it has reached the other side of the board
-void Board::pawnToQueen(Position position)
+//Return true if the transformation was successful
+bool Board::pawnToQueen(Position position)
 {
 	if(doesTileExist(position) && !isTileEmpty(position))
 	{
@@ -288,28 +345,28 @@ void Board::pawnToQueen(Position position)
 			removePiece(position);
 			Queen *newQueen = new Queen(team);
 			tiles[position.getY()][position.getX()] = newQueen;
+			return true;
 		}
 	}
 	
-	return;
+	return false;
 }
 
-//See if a player is checked.
-//Returns 0 for nothing, 1 for check, 2 for checkmate and -1 for error.
-int Board::isCheckOrMate(int team) const
+//See if a player is checked
+bool Board::isCheck(int team, bool printDebug) const
 {
-	//Find the king
 	Position kingPos;
 	bool kingFound = false;
-	int res = 0;
 	
+	//Find the king
 	for(int i = 0; i < B_SIZE; i++)
 	{
 		for(int j = 0; j < B_SIZE; j++)
 		{
-			if(tiles[i][j]->getRepresentation() == 'K' && tiles[i][j]->getTeam() == team)
+			Position pos = Position(j, i);
+			if(!isTileEmpty(pos) && tiles[i][j]->getRepresentation() == 'K' && tiles[i][j]->getTeam() == team)
 			{
-				kingPos = Position(j, i);
+				kingPos = pos;
 				kingFound = true;
 				break;
 			}
@@ -318,24 +375,35 @@ int Board::isCheckOrMate(int team) const
 			break;
 	}
 	
+	//No king found
 	if(!kingFound)
-	{
-		std::cout << "Error: no King found for team " << team << std::endl;
-		return -1;
-	}
-		
+		return false;
+	else if(printDebug)
+		std::cout << "King found for team " << team << " at position " << kingPos.toString() << std::endl;
+	
 	//See if the king is threatened and checked
 	std::vector<Position> threatenedPositions = getThreatenedPositions(team);
-	for(std::vector<Position>::iterator it; it != threatenedPositions.end(); it++)
+	for(std::vector<Position>::iterator it = threatenedPositions.begin(); it != threatenedPositions.end(); it++)
 	{
 		if(*it == kingPos)
-			res = 1;
+		{
+			return true;
+		}
 	}
+	
+	if(printDebug)
+	{
+		std::cout << "King not found in area:\n";
+		renderHighlightedPosiotions(threatenedPositions);
+		
+	}
+	
+	//THIS AINT GONNA WORK :V
 	
 	//If all tiles near the king is either friendly or threatened the king is checkmate
 	//This will be problematic as we also need to check what pieces the king can kill to stay safe.
 	//Will add that... some other time.
-	std::vector<Position> deniedPositions;
+	/*std::vector<Position> deniedPositions;
 	for(int xOffset = -1; xOffset <= 1; xOffset++)
 	{
 		for(int yOffset = -1; yOffset <= 1; yOffset++)
@@ -376,17 +444,15 @@ int Board::isCheckOrMate(int team) const
 	
 	//If all positions around the king are denied, and the king is check, the king is instead put in checkmate
 	if(res == 1  && deniedPositions.size() == 8)
-		res = 2;
+		res = 2;*/
 		
-	return res;
+	return false;
 }
 
 //Find all threatened positions for a team.
 std::vector<Position> Board::getThreatenedPositions(int team) const
 {
-	int enemyTeam = WHITE;
-	if(team == WHITE);
-		enemyTeam = BLACK;
+	int enemyTeam = getEnemyTeam(team);
 		
 	std::vector<Position> enemyMovable;
 		
@@ -398,7 +464,14 @@ std::vector<Position> Board::getThreatenedPositions(int team) const
 			Position currentPos = Position(j, i);
 			if(!isTileEmpty(currentPos) && tiles[i][j]->getTeam() == enemyTeam)
 			{
-				std::vector<Position> thisMovable = getMovable(currentPos);
+				std::vector<Position> thisMovable;
+				if(tiles[i][j]->getRepresentation() == 'P')
+				{
+					thisMovable = ((Pawn *) tiles[i][j])->getAttackableTiles(currentPos, this);
+				}
+				else
+					thisMovable = getMovable(currentPos);
+
 				enemyMovable.insert(enemyMovable.end(), thisMovable.begin(), thisMovable.end());
 			}
 		}
@@ -409,4 +482,13 @@ std::vector<Position> Board::getThreatenedPositions(int team) const
 	enemyMovable.erase(unique(enemyMovable.begin(), enemyMovable.end()), enemyMovable.end());
 	
 	return enemyMovable;
+}
+
+//Return the other team
+int Board::getEnemyTeam(int team) const
+{
+	int enemyTeam = WHITE;
+	if(team == WHITE)
+		enemyTeam = BLACK;
+	return enemyTeam;
 }

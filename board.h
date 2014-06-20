@@ -27,19 +27,20 @@ private:
 	void addPiece(Piece* piece, Position newPos, Position oldPos);
 	void removePiece(Position position);
 	std::vector<Position> getThreatenedPositions(int team) const;
-	void pawnToQueen(Position position);
+	bool pawnToQueen(Position position);
+	int getEnemyTeam(int team) const;
 public:
 	Board();
 	~Board();
 	void renderBoard() const;
+	void renderHighlightedPosiotions(std::vector<Position> positions) const;
 	int getB_SIZE() const;
-	void printMovable(Position position) const;
 	void printPositionVector(std::vector<Position> positions) const;
 	std::vector<Position> getMovable(Position position) const;
 	bool isTileTeam(Position pos, int team) const;
 	bool gameOver() const;
 	bool movePiece(Position from, Position to, int team);
-	int isCheckOrMate(int team) const;
+	bool isCheck(int team, bool printDebug=false) const;
 	bool isTileEmpty(Position position) const;
 	bool doesTileExist(Position position) const;
 	Piece* getPiece(Position position) const;
