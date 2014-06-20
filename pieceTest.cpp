@@ -63,6 +63,13 @@ void kingTest(Board *board)
 	executeMove("b3", "b4", WHITE, board, false);
 	executeMove("b3", "c4", WHITE, board, false);
 	executeMove("b3", "a3", WHITE, board);
+	executeMove("d5", "a8", BLACK, board);
+	executeMove("d2", "d4", WHITE, board);
+	executeMove("b8", "c8", BLACK, board);
+	executeMove("a3", "b3", WHITE, board);
+	executeMove("a6", "c5", BLACK, board);
+	executeMove("d4", "c5", WHITE, board);
+	executeMove("d6", "e6", BLACK, board);
 }
 
 //Also tests pawns which turned into queens
