@@ -249,7 +249,8 @@ bool Board::movePiece(Position from, Position to, int team)
 	
 	if(piece == NULL)
 	{
-		std::cout << "Cannot move because there is nothing at this location\n";
+		std::cout << "Cannot move because there is nothing at this location" << from.toString() << "\n";
+		renderBoard();
 		return false;
 	}
 	else
@@ -326,6 +327,82 @@ bool Board::movePiece(Position from, Position to, int team)
 					return true;
 				}
 			}
+		}
+	}
+	
+	return false;
+}
+
+//Castle on the king's side. kingside is true if the castling is on the king's side. Otherwise the queen's side will be used.
+bool Board::castle(int team, bool kingside)
+{
+	int yOffset;
+	if(team == WHITE)
+		yOffset = B_SIZE - 1;
+	else
+		yOffset = 0;
+		
+	//The king cannot castle while checked
+	if(isCheck(team))
+	{
+		std::cout << "King is already checked\n";
+		return false;
+	}
+	
+	//Check for pieces that shouldn't exist as not to block the castling.
+	if(kingside)
+	{
+		if(!isTileEmpty(Position(5, yOffset)) || !isTileEmpty(Position(6, yOffset)))
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if(!isTileEmpty(Position(1, yOffset)) || !isTileEmpty(Position(2, yOffset)) ||!isTileEmpty(Position(3, yOffset)))
+		{
+			return false;
+		}
+	}
+	
+	//The king may not move through or into check so we will have to check the tiles which the king moves through and to.
+	Position kingPos = Position(4, yOffset);
+	std::vector<Position> threatenedPositions = getThreatenedPositions(team);
+	int xDirection = 1;
+	if(!kingside)
+		xDirection = -1;
+	for(std::vector<Position>::iterator it = threatenedPositions.begin(); it != threatenedPositions.end(); it++)
+	{
+		if(*it == Position(kingPos.getX() + xDirection, yOffset) || *it == Position(kingPos.getX() + xDirection * 2, yOffset))
+		{
+			std::cout << "King checked upon arriving or on the way\n";
+			return false;
+		}
+	}
+	
+	//Get the rook's position
+	Position rookPos;
+	if(kingside)
+		rookPos = Position(B_SIZE - 1, yOffset);
+	else
+		rookPos = Position(0, yOffset);
+		
+	//Now check that the rook and king are the correct pieces of the correct team and hasn't moved
+	if(!isTileEmpty(rookPos) && !isTileEmpty(kingPos))
+	{
+		Piece *rook = tiles[rookPos.getY()][rookPos.getX()];
+		Piece *king = tiles[kingPos.getY()][kingPos.getX()];
+		if(rook->getRepresentation() == 'R' && king->getRepresentation() == 'K' && isTileTeam(rookPos, team)
+			&& isTileTeam(kingPos, team) && rook->hasMoved() == false && king->hasMoved() == false)
+		{
+			//Castle
+			tiles[yOffset][kingPos.getX() + xDirection * 2] = king;
+			tiles[yOffset][kingPos.getX() + xDirection] = rook;
+			tiles[rookPos.getY()][rookPos.getX()] = NULL;
+			tiles[kingPos.getY()][kingPos.getX()] = NULL;
+			rook->setMoved(true);
+			king->setMoved(true);
+			return true;
 		}
 	}
 	
@@ -449,7 +526,8 @@ bool Board::isCheck(int team, bool printDebug) const
 	return false;
 }
 
-//Find all threatened positions for a team.
+//Find all threatened positions for a team. The team which is sent to this function is not the team
+//which we will find all tiles they can attack.
 std::vector<Position> Board::getThreatenedPositions(int team) const
 {
 	int enemyTeam = getEnemyTeam(team);

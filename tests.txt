@@ -15,3 +15,6 @@ http://www.apronus.com/chess/wbeditor.php?m=e3_e6_Qg4_Qg5_Qb4_Qxg2_Qxb7_Qxg1_Qxb
 
 King and check test (white player checked four times, black player checked once):
 http://www.apronus.com/chess/wbeditor.php?m=e3_e5_Ke2_Ke7_Kd3_Kd6_Kc4_b5*_Kxb5_Na6_Kc4_Rb8_Kc3_Bb7_Kb3_Bc6*_Bb5_Bb7_Bf1_Bd5*_Ka3_Ba8_d4_Rc8_Kb3_Nc5*_dxc5*_Ke6
+
+Castling:
+http://www.apronus.com/chess/wbeditor.php?m=b3_e5_d3_Bd6_Nc3_Nh6_Qd2_O-O_Ba3_f6_O-O-O_Kf7_h3_Ke8_h4_Rh8_h5

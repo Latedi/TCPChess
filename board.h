@@ -44,6 +44,7 @@ public:
 	bool isTileEmpty(Position position) const;
 	bool doesTileExist(Position position) const;
 	Piece* getPiece(Position position) const;
+	bool castle(int team, bool kingside);
 };
 
 #endif /* BOARD_H */

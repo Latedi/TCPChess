@@ -19,17 +19,56 @@ Position stringToPosition(std::string word)
 void executeMove(std::string p1, std::string p2, int team, Board *board, bool expectedOutcome = true)
 {
 	Position from = stringToPosition(p1);
-	Position to = stringToPosition(p2);
+	Position to;
 	
-	bool res = board->movePiece(from, to, team);
+	bool res = false;
+	if(p2 != "")
+	{
+		to = stringToPosition(p2);
+		res = board->movePiece(from, to, team);
+	}
+	else if(p1 == "0-0")
+		res = board->castle(team, true);
+	else if(p1 == "0-0-0")
+		res = board->castle(team, false);
 	
 	if(res != expectedOutcome) {
-		std::cout << "Move from " << p1 << " to " << p2 << " did not get expected outcome.\n";
+		if(p2 != "")
+			std::cout << "Move from " << p1 << " to " << p2 << " did not get expected outcome.\n";
+		else
+			std::cout << "Move " << p1 << " did not get expected outcome\n";
 		board->renderBoard();
 		exit(-1);
 	}
 	
 	return;
+}
+
+//Test castling
+void castleTest(Board *board)
+{
+	executeMove("b2", "b3", WHITE, board);
+	executeMove("e7", "e5", BLACK, board);
+	executeMove("d2", "d3", WHITE, board);
+	executeMove("f8", "d6", BLACK, board);
+	executeMove("b1", "c3", WHITE, board);
+	executeMove("g8", "h6", BLACK, board);
+	executeMove("0-0-0", "", WHITE, board, false);
+	executeMove("0-0", "", WHITE, board, false);
+	executeMove("d1", "d2", WHITE, board);
+	executeMove("0-0", "", BLACK, board);
+	executeMove("0-0-0", "", WHITE, board, false);
+	executeMove("0-0", "", WHITE, board, false);
+	executeMove("c1", "a3", WHITE, board);
+	executeMove("f7", "f6", BLACK, board);
+	executeMove("0-0-0", "", WHITE, board);
+	executeMove("g8", "f7", BLACK, board);
+	executeMove("h2", "h3", WHITE, board);
+	executeMove("f7", "e8", BLACK, board);
+	executeMove("h3", "h4", WHITE, board);
+	executeMove("f8", "h8", BLACK, board);
+	executeMove("h4", "h5", WHITE, board);
+	executeMove("0-0", "", BLACK, board, false);
 }
 
 //Tests the king and check
@@ -41,7 +80,7 @@ void kingTest(Board *board)
 	executeMove("e8", "e7", BLACK, board);
 	executeMove("e2", "d3", WHITE, board);
 	executeMove("e7", "d6", BLACK, board);
-	executeMove("e2", "d3", WHITE, board, false);
+	executeMove("d3", "d4", WHITE, board, false);
 	executeMove("d3", "c4", WHITE, board);
 	executeMove("d6", "d5", BLACK, board, false);
 	executeMove("b7", "b5", BLACK, board);
@@ -266,6 +305,14 @@ int main(int argc, char* argv[])
 	kingTest(board);
 	board->renderBoard();
 	delete board;
+	
+	std::cout << "\nTesting Castling:\n";
+	board = new Board();
+	castleTest(board);
+	board->renderBoard();
+	delete board;
+	
+	std::cout << "\nTEST COMPLETED\n";
 	
  	return 0;
 }
