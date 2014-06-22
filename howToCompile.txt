@@ -10,3 +10,6 @@ gcc main.cpp board.cpp game.cpp piece.cpp position.cpp networking.cpp -o TCPChes
 
 Unit Tests:
 gcc board.cpp piece.cpp position.cpp pieceTest.cpp -o PieceTest.exe -Wall -lstdc++
+
+Release build for people without Mingw:
+gcc main.cpp board.cpp game.cpp piece.cpp position.cpp networking.cpp -o "Release/TCPChess-1.0.exe" -Lc:/user/SFML2.1/lib -Ic:/user/SFML2.1/include -lsfml-system -lsfml-network -Wall -lstdc++
