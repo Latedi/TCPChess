@@ -1,6 +1,14 @@
 Install mingw
-gcc main.cpp board.cpp game.cpp piece.cpp position.cpp -o TCPChess.exe -Wall -lstdc++
+Install SFML 2.1
+
+Main program:
+If you installed SFML 2.1 in for example c:/User/SFML2.1 then you compile like this
+gcc main.cpp board.cpp game.cpp piece.cpp position.cpp networking.cpp -o TCPChess.exe -Lc:/user/SFML2.1/lib -Ic:/user/SFML2.1/include -lsfml-system -lsfml-network -Wall -lstdc++
 
 
 tests:
 gcc board.cpp piece.cpp position.cpp pieceTest.cpp -o PieceTest.exe -Wall -lstdc++
+
+
+
+gcc main.cpp board.cpp game.cpp piece.cpp position.cpp networking.cpp -o TCPChess.exe -Lc:/users/latedi/SFML2.1/lib -Ic:/users/latedi/SFML2.1/include -lsfml-system -lsfml-network -Wall -lstdc++

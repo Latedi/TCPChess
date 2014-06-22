@@ -111,12 +111,6 @@ bool Board::isTileTeam(Position pos, int team) const
 	return false;
 }
 
-//See if there's a checkmate
-bool Board::gameOver() const
-{
-	return false;
-}
-
 //Return the positions a piece can move to.
 std::vector<Position> Board::getMovable(Position position) const
 {
@@ -314,10 +308,6 @@ bool Board::movePiece(Position from, Position to, int team)
 					//Mark pieces which has moved. Used for castelling and pawns moving two steps.
 					if(!piece->hasMoved())
 						piece->setMoved(true);
-						
-					//And finally, if we checkmated the opponent lets print something
-					if(isChekmate(getEnemyTeam(team)))
-						std::cout << "Player " << getEnemyTeam(team) << " is checkmate\n";
 					
 					return true;
 				}

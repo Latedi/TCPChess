@@ -1,7 +1,9 @@
 #include "game.h"
 
-Game::Game()
+Game::Game(Networking *network, int myTeam)
 {
+	this->network = network;
+	this->myTeam = myTeam;
 	board = new Board();
 	xOffset = (int) 'a';
 	yOffset = (int) '1';
@@ -25,15 +27,33 @@ void Game::play()
 	{
 		validInput = false;
 		board->renderBoard();
-		while(!validInput)
+		
+		if(currentPlayer == myTeam)
 		{
-			std::cout << "Please enter a move player " << currentPlayer + 1 << " (type 'quit' to exit)\n";
-			std::getline(std::cin,input);
-			validInput = parse(input, currentPlayer);
+			//If it's this player's turn, get input, process it and if valid, send to the other player
+			while(!validInput)
+			{
+				std::cout << "Please enter a move (type 'quit' to exit)\n";
+				std::getline(std::cin,input);
+				validInput = parse(input, currentPlayer);
+				if(validInput)
+					network->sendData(input);
+			}
 		}
+		else
+		{
+			//If it's the other player's turn, receive input until it is valid
+			while(!validInput)
+			{
+				input = network->receiveData();
+				validInput = parse(input, currentPlayer);
+			}
+		}
+		
 		changeTeam(currentPlayer);
-		gameOver = board->gameOver();
+		gameOver = board->isChekmate(currentPlayer);
 	}
+	
 	std::cout << "GG\n";
 	return;
 }
@@ -83,10 +103,9 @@ bool Game::parse(std::string &input, int team)
 		return executeMove(commandWords[1], commandWords[2], team);
 	}
 	//parse castle command
-	else if(commandWords[0] == "castle")
+	else if(commandWords[0] == "0-0" || commandWords[0] == "O-O" || commandWords[0] == "0-0-0" || commandWords[0] == "O-O-O")
 	{
-		std::cout << "u gon castle son\n";
-		return true;
+		return executeMove(commandWords[1], commandWords[2], team);
 	}
 	//get help
 	else if(commandWords[0] == "help")
@@ -97,6 +116,8 @@ bool Game::parse(std::string &input, int team)
 	//quit the game
 	else if(commandWords[0] == "quit")
 	{
+		network->sendData("quit");
+		network->disconnect();
 		exit(0);
 	}
 	else
@@ -111,10 +132,24 @@ bool Game::parse(std::string &input, int team)
 //Try to move a piece from one tile to another
 bool Game::executeMove(std::string p1, std::string p2, int team)
 {
-	Position from = stringToPosition(p1);
-	Position to = stringToPosition(p2);
+	//We use different commands for moving and castling to both sides
+	bool res = false;
+	if(p2 != "")
+	{
+		Position from = stringToPosition(p1);
+		Position to = stringToPosition(p2);
+		res = board->movePiece(from, to, team);
+	}
+	else if(p1 == "0-0" || p1 == "O-O")
+	{
+		res = board->castle(team, true);
+	}
+	else if(p1 == "0-0-0" || p1 == "O-O-O")
+	{
+		res = board->castle(team, false);
+	}
 	
-	return board->movePiece(from, to, team);
+	return res;
 }
 
 //Change player who gets to input commands
@@ -129,7 +164,9 @@ void Game::changeTeam(int &team)
 //Display available commands
 void Game::printHelp()
 {
-	std::cout << "lul tough luck son\n";
+	std::cout << "Available commands\n'Move <c1> <c2>' where <c1> is a valid tile with a piece you own and <c2> is a valid"
+				"tile to which <c1> can move.\nCastling is done with either '0-0' (kingside) or '0-0-0' (queenside). 'O' can"
+				" be used instead of zeros.\n'quit' to exit the game.\n'help' to print this message.\n";
 }
 
 //Translate input to a board position. Keep this in comments if something goes wrong.

@@ -38,7 +38,6 @@ public:
 	void printPositionVector(std::vector<Position> positions) const;
 	std::vector<Position> getMovable(Position position) const;
 	bool isTileTeam(Position pos, int team) const;
-	bool gameOver() const;
 	bool movePiece(Position from, Position to, int team);
 	bool isCheck(int team, bool printDebug=false) const;
 	bool isChekmate(int team);
