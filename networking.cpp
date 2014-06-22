@@ -5,6 +5,7 @@ Networking::Networking(int port)
 	this->port = port;
 }
 
+//Host on a port and wait for a connection
 bool Networking::host()
 {
 	if (listener.listen(port) != sf::Socket::Done)
@@ -23,6 +24,7 @@ bool Networking::host()
 	return true;
 }
 
+//Connect using an IP address and a port
 bool Networking::connect(std::string ip)
 {
 	if (socket.connect(ip, port) != sf::Socket::Done)
@@ -35,9 +37,10 @@ bool Networking::connect(std::string ip)
 	return true;
 }
 
+//Send data via the socket
 bool Networking::sendData(std::string data)
 {
-	if(socket.send(data.c_str(), data.length()) != sf::Socket::Done)
+	if(socket.send(data.c_str(), strlen(data.c_str())) != sf::Socket::Done)
 	{
 		std::cout << "Failure sending data\n";
 		return false;
@@ -46,6 +49,7 @@ bool Networking::sendData(std::string data)
 	return true;
 }
 
+//Receive data from the socket. This function is blocking.
 std::string Networking::receiveData()
 {
 	char data[100];
@@ -56,9 +60,13 @@ std::string Networking::receiveData()
 		return "";
 	}
 	
-	return std::string(data);
+	std::string dataString = std::string(data);
+	dataString = dataString.substr(0, received);
+	
+	return std::string(dataString);
 }
 
+//Disconnect
 void Networking::disconnect()
 {
 	socket.disconnect();

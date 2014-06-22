@@ -33,7 +33,7 @@ void Game::play()
 			//If it's this player's turn, get input, process it and if valid, send to the other player
 			while(!validInput)
 			{
-				std::cout << "Please enter a move (type 'quit' to exit)\n";
+				std::cout << "Please enter a move (type 'help' for a list of commands)\n";
 				std::getline(std::cin,input);
 				validInput = parse(input, currentPlayer);
 				if(validInput)
@@ -46,15 +46,26 @@ void Game::play()
 			while(!validInput)
 			{
 				input = network->receiveData();
+				if(input == "")
+				{
+					std::cout << "Your opponent disconnected\n";
+					exit(0);
+				}
 				validInput = parse(input, currentPlayer);
 			}
 		}
 		
+		//Change player and see if there's a checkmate
 		changeTeam(currentPlayer);
 		gameOver = board->isChekmate(currentPlayer);
+		if(gameOver)
+		{
+			std::cout << "Checkmate. Player " << board->getEnemyTeam(currentPlayer) << " wins!\n";
+			network->disconnect();
+			exit(0);
+		}
 	}
 	
-	std::cout << "GG\n";
 	return;
 }
 
@@ -70,6 +81,7 @@ bool Game::parse(std::string &input, int team)
     while (std::getline(ss, token, delim)) {
         commandWords.push_back(token);
     }
+	
 	//parse move command
 	if(commandWords[0] == "move")
 	{
@@ -105,7 +117,7 @@ bool Game::parse(std::string &input, int team)
 	//parse castle command
 	else if(commandWords[0] == "0-0" || commandWords[0] == "O-O" || commandWords[0] == "0-0-0" || commandWords[0] == "O-O-O")
 	{
-		return executeMove(commandWords[1], commandWords[2], team);
+		return executeMove(commandWords[0], "", team);
 	}
 	//get help
 	else if(commandWords[0] == "help")
@@ -116,7 +128,10 @@ bool Game::parse(std::string &input, int team)
 	//quit the game
 	else if(commandWords[0] == "quit")
 	{
-		network->sendData("quit");
+		if(team == myTeam)
+			network->sendData("quit");
+		else
+			std::cout << "Your opponent disconnected\n";
 		network->disconnect();
 		exit(0);
 	}
@@ -126,7 +141,7 @@ bool Game::parse(std::string &input, int team)
 		return false;
 	}
 	
-	return true;
+	return false;
 }
 
 //Try to move a piece from one tile to another

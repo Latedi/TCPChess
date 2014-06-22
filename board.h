@@ -28,7 +28,6 @@ private:
 	void removePiece(Position position);
 	std::vector<Position> getThreatenedPositions(int team) const;
 	bool pawnToQueen(Position position);
-	int getEnemyTeam(int team) const;
 public:
 	Board();
 	~Board();
@@ -45,6 +44,7 @@ public:
 	bool doesTileExist(Position position) const;
 	Piece* getPiece(Position position) const;
 	bool castle(int team, bool kingside);
+	int getEnemyTeam(int team) const;
 };
 
 #endif /* BOARD_H */

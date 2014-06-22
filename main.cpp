@@ -28,31 +28,33 @@ int getPort()
 int main(int argc, char* argv[])
 {
 	std::string input;
-	Game game;
+	Game *game = NULL;
 	Networking *network = NULL;
 	
 	while(input != "quit")
 	{
 		std::cout << "Welcome to TCP Chess. Input 'host' to host a game or 'connect' to"
-			"connect to a game. You can also exit by typing 'quit'.\n";
+			" connect to a game. You can also exit by typing 'quit'.\n";
 		std::getline(std::cin, input);
 			
 		if(input == "host")
 		{
 			network = new Networking(getPort());
 			network->host();
-			game = Game(network, WHITE);
-			game.play();
+			game = new Game(network, WHITE);
+			game->play();
 		}
 		else if(input == "connect")
 		{
 			network = new Networking(getPort());
 			network->connect(getIP());
-			game = Game(network, BLACK);
-			game.play();
+			game = new Game(network, BLACK);
+			game->play();
 		}
 	}
 
+	delete game;
 	delete network;
+	
  	return 0;
 }

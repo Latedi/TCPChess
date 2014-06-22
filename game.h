@@ -31,6 +31,7 @@ private:
 public:
 	Game() {};
 	Game(Networking *network, int myTeam);
+	Game(const Game& other);
 	~Game();
 	void play();
 };
